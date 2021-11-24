@@ -15,6 +15,15 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 
 @ModuleInfo(name = "NameProtect", description = "Changes playernames clientside.", category = ModuleCategory.MISC)
 public class NameProtect extends Module {
+    private static NameProtect instance;
+
+    public NameProtect(){
+        instance = this;
+    }
+
+    public static NameProtect getInstance(){
+        return instance;
+    }
 
     private final TextValue fakeNameValue = new TextValue("FakeName", "&cMe");
     public final BoolValue allPlayersValue = new BoolValue("AllPlayers", false);
