@@ -309,8 +309,6 @@ public class GuiChat extends GuiScreen {
 	}
 
 	public void onAutocompleteResponse(String[] p_146406_1_) {
-        if (LiquidBounce.commandManager.getLatestAutoComplete().length != 0) return;
-
 		if (this.waitingOnAutocomplete) {
 			this.playerNamesFound = false;
 			this.foundPlayerNames.clear();
@@ -329,6 +327,7 @@ public class GuiChat extends GuiScreen {
 				this.inputField.writeText(s2);
 			} else if (this.foundPlayerNames.size() > 0) {
 				this.playerNamesFound = true;
+				if (LiquidBounce.commandManager.getLatestAutoComplete().length != 0) return;
 				this.autocompletePlayerNames();
 			}
 		}
