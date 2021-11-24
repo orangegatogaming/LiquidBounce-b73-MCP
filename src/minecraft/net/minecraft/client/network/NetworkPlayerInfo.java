@@ -2,6 +2,7 @@ package net.minecraft.client.network;
 
 import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
+import net.ccbluex.liquidbounce.features.module.modules.misc.NameProtect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
@@ -79,6 +80,15 @@ public class NetworkPlayerInfo {
 	}
 
 	public ResourceLocation getLocationSkin() {
+		NameProtect nameProtect = NameProtect.getInstance();
+
+		if (nameProtect.getState() && nameProtect.skinProtectValue.get()) {
+			boolean equals = gameProfile.getId() == Minecraft.getMinecraft().getSession().getProfile().getId();
+			if (nameProtect.allPlayersValue.get() || equals) {
+				return DefaultPlayerSkin.getDefaultSkin(this.gameProfile.getId());
+			}
+		}
+
 		if (this.locationSkin == null) {
 			this.loadPlayerTextures();
 		}
