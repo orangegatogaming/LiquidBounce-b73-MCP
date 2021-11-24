@@ -1,18 +1,14 @@
 package net.minecraft.entity;
 
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFence;
-import net.minecraft.block.BlockFenceGate;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockWall;
+import net.ccbluex.liquidbounce.LiquidBounce;
+import net.ccbluex.liquidbounce.event.StrafeEvent;
+import net.ccbluex.liquidbounce.features.module.modules.combat.HitBox;
+import net.ccbluex.liquidbounce.features.module.modules.exploit.NoPitchLimit;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockPattern;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.crash.CrashReport;
@@ -32,21 +28,15 @@ import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.ReportedException;
-import net.minecraft.util.StatCollector;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.Callable;
 
 public abstract class Entity implements ICommandSender {
 	private static final AxisAlignedBB ZERO_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
@@ -417,7 +407,10 @@ public abstract class Entity implements ICommandSender {
 		float f1 = this.rotationYaw;
 		this.rotationYaw = (float) ((double) this.rotationYaw + (double) yaw * 0.15D);
 		this.rotationPitch = (float) ((double) this.rotationPitch - (double) pitch * 0.15D);
-		this.rotationPitch = MathHelper.clamp(this.rotationPitch, -90.0F, 90.0F);
+
+		if(!NoPitchLimit.Companion.getInstance().getState())
+			this.rotationPitch = MathHelper.clamp(this.rotationPitch, -90.0F, 90.0F);
+
 		this.prevRotationPitch += this.rotationPitch - f;
 		this.prevRotationYaw += this.rotationYaw - f1;
 	}
@@ -1094,6 +1087,14 @@ public abstract class Entity implements ICommandSender {
 	 * Used in both water and by flying objects
 	 */
 	public void moveFlying(float strafe, float forward, float friction) {
+		if(this == Minecraft.getMinecraft().thePlayer){
+			final StrafeEvent strafeEvent = new StrafeEvent(strafe, forward, friction);
+			LiquidBounce.eventManager.callEvent(strafeEvent);
+
+			if (strafeEvent.isCancelled())
+				return;
+		}
+
 		float f = strafe * strafe + forward * forward;
 
 		if (f >= 1.0E-4F) {
@@ -1778,6 +1779,11 @@ public abstract class Entity implements ICommandSender {
 	}
 
 	public float getCollisionBorderSize() {
+		final HitBox hitBox = HitBox.Companion.getInstance();
+
+		if (hitBox.getState())
+			return 0.1F + hitBox.getSizeValue().get();
+
 		return 0.1F;
 	}
 
