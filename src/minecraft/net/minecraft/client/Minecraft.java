@@ -43,6 +43,7 @@ import net.ccbluex.liquidbounce.event.KeyEvent;
 import net.ccbluex.liquidbounce.event.TickEvent;
 import net.ccbluex.liquidbounce.ui.client.GuiUpdate;
 import net.ccbluex.liquidbounce.ui.client.GuiWelcome;
+import net.ccbluex.liquidbounce.utils.render.IconUtils;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -683,6 +684,16 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	}
 
 	private void setWindowIcon() {
+		if(Util.getOSType() != Util.EnumOS.OSX) {
+			final ByteBuffer[] liquidBounceFavicon = IconUtils.getFavicon();
+			if(liquidBounceFavicon != null) {
+				Display.setIcon(liquidBounceFavicon);
+				return;
+			}else{
+				logger.info("LiquidBounce icon is null, skipping setting it");
+			}
+		}
+
 		Util.EnumOS util$enumos = Util.getOSType();
 
 		if (util$enumos != Util.EnumOS.OSX) {
