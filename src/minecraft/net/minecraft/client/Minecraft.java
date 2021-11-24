@@ -605,7 +605,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 		LiquidBounce.INSTANCE.startClient();
 
-		GuiScreen mainMenu = new net.ccbluex.liquidbounce.ui.client.GuiMainMenu();
+		GuiScreen mainMenu = LiquidBounce.guiMain;
 		if(LiquidBounce.fileManager.firstStart){
 			mainMenu = new GuiWelcome();
 		}else if(LiquidBounce.INSTANCE.getLatestVersion() > LiquidBounce.CLIENT_VERSION - (LiquidBounce.IN_DEV ? 1 : 0)){
@@ -965,7 +965,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		}
 
 		if (guiScreenIn == null && this.theWorld == null) {
-			guiScreenIn = new GuiMainMenu();
+			guiScreenIn = LiquidBounce.guiMain;
 		} else if (guiScreenIn == null && this.thePlayer.getHealth() <= 0.0F) {
 			guiScreenIn = new GuiGameOver();
 		}
@@ -976,7 +976,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		}
 
 		if(currentScreen instanceof net.minecraft.client.gui.GuiMainMenu || (currentScreen != null && currentScreen.getClass().getName().startsWith("net.labymod") && currentScreen.getClass().getSimpleName().equals("ModGuiMainMenu"))) {
-			guiScreenIn = new net.ccbluex.liquidbounce.ui.client.GuiMainMenu();
+			guiScreenIn = LiquidBounce.guiMain;
 
 			ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
 			guiScreenIn.setWorldAndResolution(Minecraft.getMinecraft(), scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight());

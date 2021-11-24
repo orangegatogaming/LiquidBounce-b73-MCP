@@ -2,6 +2,7 @@ package net.minecraft.client.gui;
 
 import java.io.IOException;
 
+import net.ccbluex.liquidbounce.LiquidBounce;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.play.client.C00PacketKeepAlive;
@@ -31,12 +32,12 @@ public class GuiDownloadTerrain extends GuiScreen {
 			this.mc.loadWorld(null);
 
 			if (flag) {
-				this.mc.displayGuiScreen(new GuiMainMenu());
+				this.mc.displayGuiScreen(LiquidBounce.guiMain);
 			} else if (flag1) {
 				RealmsBridge realmsbridge = new RealmsBridge();
-				realmsbridge.switchToRealms(new GuiMainMenu());
+				realmsbridge.switchToRealms(LiquidBounce.guiMain);
 			} else {
-				this.mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
+				this.mc.displayGuiScreen(new GuiMultiplayer(LiquidBounce.guiMain));
 			}
 		}
 	}

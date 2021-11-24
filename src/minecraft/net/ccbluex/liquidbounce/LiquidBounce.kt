@@ -16,6 +16,7 @@ import net.ccbluex.liquidbounce.script.ScriptManager
 import net.ccbluex.liquidbounce.tabs.BlocksTab
 import net.ccbluex.liquidbounce.tabs.ExploitsTab
 import net.ccbluex.liquidbounce.tabs.HeadsTab
+import net.ccbluex.liquidbounce.ui.client.GuiMainMenu
 import net.ccbluex.liquidbounce.ui.client.altmanager.GuiAltManager
 import net.ccbluex.liquidbounce.ui.client.clickgui.ClickGui
 import net.ccbluex.liquidbounce.ui.client.hud.HUD
@@ -26,6 +27,7 @@ import net.ccbluex.liquidbounce.utils.ClientUtils
 import net.ccbluex.liquidbounce.utils.InventoryUtils
 import net.ccbluex.liquidbounce.utils.RotationUtils
 import net.ccbluex.liquidbounce.utils.misc.HttpUtils
+import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
 
 object LiquidBounce {
@@ -60,6 +62,8 @@ object LiquidBounce {
 
     // Discord RPC
     private lateinit var clientRichPresence: ClientRichPresence
+
+    lateinit var guiMain: GuiScreen
 
     /**
      * Execute if client will be started
@@ -158,6 +162,8 @@ object LiquidBounce {
 
         // Load generators
         GuiAltManager.loadGenerators()
+
+        guiMain = GuiMainMenu()
 
         // Set is starting status
         isStarting = false

@@ -1,6 +1,8 @@
 package net.minecraft.client.gui;
 
 import java.io.IOException;
+
+import net.ccbluex.liquidbounce.LiquidBounce;
 import net.minecraft.client.resources.I18n;
 
 public class GuiMemoryErrorScreen extends GuiScreen
@@ -23,7 +25,7 @@ public class GuiMemoryErrorScreen extends GuiScreen
     {
         if (button.id == 0)
         {
-            this.mc.displayGuiScreen(new GuiMainMenu());
+            this.mc.displayGuiScreen(LiquidBounce.guiMain);
         }
         else if (button.id == 1)
         {

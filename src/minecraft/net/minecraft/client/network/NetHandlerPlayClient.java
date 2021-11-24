@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.Map.Entry;
+
+import net.ccbluex.liquidbounce.LiquidBounce;
 import net.minecraft.block.Block;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.Minecraft;
@@ -807,7 +809,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient
         }
         else
         {
-            this.gameController.displayGuiScreen(new GuiDisconnected(new GuiMultiplayer(new GuiMainMenu()), "disconnect.lost", reason));
+            this.gameController.displayGuiScreen(new GuiDisconnected(new GuiMultiplayer(LiquidBounce.guiMain), "disconnect.lost", reason));
         }
     }
 

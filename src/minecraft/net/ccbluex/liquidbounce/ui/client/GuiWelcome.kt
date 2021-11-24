@@ -53,7 +53,7 @@ class GuiWelcome : GuiScreen() {
 
     override fun actionPerformed(button: GuiButton) {
         if (button.id == 1) {
-            mc.displayGuiScreen(GuiMainMenu())
+            mc.displayGuiScreen(LiquidBounce.guiMain)
         }
     }
 }
