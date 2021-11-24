@@ -26,6 +26,17 @@ import net.minecraft.util.*;
 
 @ModuleInfo(name = "NoFall", description = "Prevents you from taking fall damage.", category = ModuleCategory.PLAYER)
 public class NoFall extends Module {
+    // FINALLY JAVA
+    private static NoFall instance = null;
+
+    public static NoFall getInstance(){
+        return instance;
+    }
+
+    public NoFall(){
+        instance = this;
+    }
+
     public final ListValue modeValue = new ListValue("Mode", new String[]{"SpoofGround", "NoGround", "Packet", "MLG", "AAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "Spartan", "CubeCraft", "Hypixel"}, "SpoofGround");
     private final FloatValue minFallDistance = new FloatValue("MinMLGHeight", 5F, 2F, 50F);
     private final TickTimer spartanTimer = new TickTimer();
