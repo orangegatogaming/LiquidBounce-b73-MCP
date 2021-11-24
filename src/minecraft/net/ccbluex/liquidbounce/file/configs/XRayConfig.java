@@ -39,18 +39,18 @@ public class XRayConfig extends FileConfig {
 
         final JsonArray jsonArray = new JsonParser().parse(new BufferedReader(new FileReader(getFile()))).getAsJsonArray();
 
-        xRay.getXrayBlocks().clear();
+        xRay.xrayBlocks.clear();
 
         for(final JsonElement jsonElement : jsonArray) {
             try {
                 final Block block = Block.getBlockFromName(jsonElement.getAsString());
 
-                if (xRay.getXrayBlocks().contains(block) && block != null) {
+                if (xRay.xrayBlocks.contains(block) && block != null) {
                     ClientUtils.getLogger().error("[FileManager] Skipped xray block '" + block.getUnlocalizedName() + "' because the block is already added.");
                     continue;
                 }
 
-                xRay.getXrayBlocks().add(block);
+                xRay.xrayBlocks.add(block);
             }catch(final Throwable throwable) {
                 ClientUtils.getLogger().error("[FileManager] Failed to add block to xray.", throwable);
             }
@@ -73,7 +73,7 @@ public class XRayConfig extends FileConfig {
 
         final JsonArray jsonArray = new JsonArray();
 
-        for (final Block block : xRay.getXrayBlocks())
+        for (final Block block : xRay.xrayBlocks)
             jsonArray.add(FileManager.PRETTY_GSON.toJsonTree(Block.getIdFromBlock(block)));
 
         final PrintWriter printWriter = new PrintWriter(new FileWriter(getFile()));

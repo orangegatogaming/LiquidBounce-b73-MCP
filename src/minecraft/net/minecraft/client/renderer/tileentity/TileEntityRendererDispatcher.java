@@ -103,9 +103,9 @@ public class TileEntityRendererDispatcher {
 	}
 
 	public void renderTileEntity(TileEntity tileentityIn, float partialTicks, int destroyStage) {
-		final XRay xray = XRay.Companion.getInstance();
+		final XRay xray = XRay.getInstance();
 
-		if (xray.getState() && !xray.getXrayBlocks().contains(tileentityIn.getBlockType()))
+		if (xray.getState() && !xray.xrayBlocks.contains(tileentityIn.getBlockType()))
 			return;
 
 		if (tileentityIn.getDistanceSq(this.entityX, this.entityY, this.entityZ) < tileentityIn.getMaxRenderDistanceSquared()) {

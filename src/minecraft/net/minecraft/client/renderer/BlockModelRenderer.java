@@ -43,7 +43,7 @@ public class BlockModelRenderer {
 	}
 
 	public boolean renderModelAmbientOcclusion(IBlockAccess blockAccessIn, IBakedModel modelIn, Block blockIn, BlockPos blockPosIn, WorldRenderer worldRendererIn, boolean checkSides) {
-		if(XRay.Companion.getInstance().getState()){
+		if(XRay.getInstance().getState() && !XRay.getInstance().xrayBlocks.contains(blockIn)){
 			return false;
 		}
 
@@ -76,7 +76,7 @@ public class BlockModelRenderer {
 	}
 
 	public boolean renderModelStandard(IBlockAccess blockAccessIn, IBakedModel modelIn, Block blockIn, BlockPos blockPosIn, WorldRenderer worldRendererIn, boolean checkSides) {
-		if(XRay.Companion.getInstance().getState()){
+		if(XRay.getInstance().getState() && !XRay.getInstance().xrayBlocks.contains(blockIn)){
 			return false;
 		}
 		boolean flag = false;

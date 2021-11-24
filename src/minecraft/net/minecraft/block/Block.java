@@ -435,11 +435,9 @@ public class Block {
 	}
 
 	public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
-		if(XRay.Companion.getInstance().getState()){
-			XRay xray = XRay.Companion.getInstance();
-			return xray.getXrayBlocks().contains(this);
+		if(XRay.getInstance().getState()){
+			return XRay.getInstance().xrayBlocks.contains(this);
 		}
-
 
 		return side == EnumFacing.DOWN && this.minY > 0.0D ? true : (side == EnumFacing.UP && this.maxY < 1.0D ? true : (side == EnumFacing.NORTH && this.minZ > 0.0D ? true : (side == EnumFacing.SOUTH && this.maxZ < 1.0D ? true : (side == EnumFacing.WEST && this.minX > 0.0D ? true : (side == EnumFacing.EAST && this.maxX < 1.0D ? true : !worldIn.getBlockState(pos).getBlock().isOpaqueCube())))));
 	}
@@ -998,7 +996,7 @@ public class Block {
 	 * Returns the default ambient occlusion value based on block opacity
 	 */
 	public float getAmbientOcclusionLightValue() {
-		if(XRay.Companion.getInstance().getState()){
+		if(XRay.getInstance().getState()){
 			return 1.0F;
 		}
 
