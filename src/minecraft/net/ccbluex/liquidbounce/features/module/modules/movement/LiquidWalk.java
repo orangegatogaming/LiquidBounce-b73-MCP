@@ -19,6 +19,15 @@ import org.lwjgl.input.Keyboard;
 
 @ModuleInfo(name = "LiquidWalk", description = "Allows you to walk on water.", category = ModuleCategory.MOVEMENT, keyBind = Keyboard.KEY_J)
 public class LiquidWalk extends Module {
+    private static LiquidWalk instance = null;
+
+    public static LiquidWalk getInstance(){
+        return instance;
+    }
+
+    public LiquidWalk(){
+        instance = this;
+    }
 
     public final ListValue modeValue = new ListValue("Mode", new String[] {"Vanilla", "NCP", "AAC", "AAC3.3.11", "AACFly", "Spartan", "Dolphin"}, "NCP");
     private final BoolValue noJumpValue = new BoolValue("NoJump", false);
