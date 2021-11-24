@@ -8,6 +8,15 @@ import net.ccbluex.liquidbounce.value.FloatValue;
 
 @ModuleInfo(name = "Derp", description = "Makes it look like you were derping around.", category = ModuleCategory.FUN)
 public class Derp extends Module {
+	private static Derp instance;
+
+	public static Derp getInstance(){
+		return instance;
+	}
+
+	public Derp(){
+		instance = this;
+	}
 
 	private BoolValue headlessValue = new BoolValue("Headless", false);
 	private BoolValue spinnyValue = new BoolValue("Spinny", false);
