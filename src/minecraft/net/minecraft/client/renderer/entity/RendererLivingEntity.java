@@ -1,10 +1,19 @@
 package net.minecraft.client.renderer.entity;
 
+import co.uk.hexeption.utils.OutlineUtils;
 import com.google.common.collect.Lists;
 
+import java.awt.*;
 import java.nio.FloatBuffer;
 import java.util.List;
 
+import net.ccbluex.liquidbounce.features.module.modules.render.Chams;
+import net.ccbluex.liquidbounce.features.module.modules.render.ESP;
+import net.ccbluex.liquidbounce.features.module.modules.render.NameTags;
+import net.ccbluex.liquidbounce.features.module.modules.render.TrueSight;
+import net.ccbluex.liquidbounce.utils.ClientUtils;
+import net.ccbluex.liquidbounce.utils.EntityUtils;
+import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -80,6 +89,14 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 	 * Renders the desired {@code T} type Entity.
 	 */
 	public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
+		final Chams chams = Chams.getInstance();
+		final boolean chams_ = chams.getState() && chams.targetsValue.get() && EntityUtils.isSelected(entity, false);
+
+		if (chams_) {
+			GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
+			GL11.glPolygonOffset(1.0F, -1000000F);
+		}
+
 		GlStateManager.pushMatrix();
 		GlStateManager.disableCull();
 		this.mainModel.swingProgress = this.getSwingProgress(entity, partialTicks);
@@ -172,6 +189,11 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 		if (!this.renderOutlines) {
 			super.doRender(entity, x, y, z, entityYaw, partialTicks);
 		}
+
+		if (chams_) {
+			GL11.glPolygonOffset(1.0F, 1000000F);
+			GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
+		}
 	}
 
 	protected boolean setScoreTeamColor(T entityLivingBaseIn) {
@@ -215,10 +237,11 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 	 * Renders the model in RenderLiving
 	 */
 	protected void renderModel(T entitylivingbaseIn, float p_77036_2_, float p_77036_3_, float p_77036_4_, float p_77036_5_, float p_77036_6_, float scaleFactor) {
-		boolean flag = !entitylivingbaseIn.isInvisible();
-		boolean flag1 = !flag && !entitylivingbaseIn.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer);
+		boolean visible = !entitylivingbaseIn.isInvisible();
+		TrueSight trueSight = TrueSight.getInstance();
+		boolean flag1 = !visible && (!entitylivingbaseIn.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer) || (trueSight.getState() && trueSight.entitiesValue.get()));
 
-		if (flag || flag1) {
+		if (visible || flag1) {
 			if (!this.bindEntityTexture(entitylivingbaseIn)) {
 				return;
 			}
@@ -230,6 +253,57 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 				GlStateManager.enableBlend();
 				GlStateManager.blendFunc(770, 771);
 				GlStateManager.alphaFunc(516, 0.003921569F);
+			}
+
+			final ESP esp = ESP.getInstance();
+			if(esp.getState() && EntityUtils.isSelected(entitylivingbaseIn, false)) {
+				Minecraft mc = Minecraft.getMinecraft();
+				boolean fancyGraphics = mc.gameSettings.fancyGraphics;
+				mc.gameSettings.fancyGraphics = false;
+
+				float gamma = mc.gameSettings.gammaSetting;
+				mc.gameSettings.gammaSetting = 100000F;
+
+				switch(esp.modeValue.get().toLowerCase()) {
+					case "wireframe":
+						GL11.glPushMatrix();
+						GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+						GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+						GL11.glDisable(GL11.GL_TEXTURE_2D);
+						GL11.glDisable(GL11.GL_LIGHTING);
+						GL11.glDisable(GL11.GL_DEPTH_TEST);
+						GL11.glEnable(GL11.GL_LINE_SMOOTH);
+						GL11.glEnable(GL11.GL_BLEND);
+						GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+						RenderUtils.glColor(esp.getColor(entitylivingbaseIn));
+						GL11.glLineWidth(esp.wireframeWidth.get());
+						this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
+						GL11.glPopAttrib();
+						GL11.glPopMatrix();
+						break;
+					case "outline":
+						ClientUtils.disableFastRender();
+						GlStateManager.resetColor();
+
+						final Color color = esp.getColor(entitylivingbaseIn);
+						OutlineUtils.setColor(color);
+						OutlineUtils.renderOne(esp.outlineWidth.get());
+						this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
+						OutlineUtils.setColor(color);
+						OutlineUtils.renderTwo();
+						this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
+						OutlineUtils.setColor(color);
+						OutlineUtils.renderThree();
+						this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
+						OutlineUtils.setColor(color);
+						OutlineUtils.renderFour(color);
+						this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
+						OutlineUtils.setColor(color);
+						OutlineUtils.renderFive();
+						OutlineUtils.setColor(Color.WHITE);
+				}
+				mc.gameSettings.fancyGraphics = fancyGraphics;
+				mc.gameSettings.gammaSetting = gamma;
 			}
 
 			this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
@@ -479,6 +553,9 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 	}
 
 	protected boolean canRenderName(T entity) {
+		if(!ESP.renderNameTags && NameTags.getInstance().getState() && EntityUtils.isSelected(entity, false)){
+			return false;
+		}
 		EntityPlayerSP entityplayersp = Minecraft.getMinecraft().thePlayer;
 
 		if (entity instanceof EntityPlayer && entity != entityplayersp) {
