@@ -15,6 +15,14 @@ import kotlin.random.Random
 
 @ModuleInfo(name = "AutoClicker", description = "Constantly clicks when holding down a mouse button.", category = ModuleCategory.COMBAT)
 class AutoClicker : Module() {
+    companion object {
+        var instance: AutoClicker? = null
+    }
+
+    init {
+        instance = this
+    }
+
     private val maxCPSValue: IntegerValue = object : IntegerValue("MaxCPS", 8, 1, 20) {
 
         override fun onChanged(oldValue: Int, newValue: Int) {
