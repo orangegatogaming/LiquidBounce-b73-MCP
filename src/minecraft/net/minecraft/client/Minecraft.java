@@ -41,8 +41,10 @@ import net.ccbluex.liquidbounce.LiquidBounce;
 import net.ccbluex.liquidbounce.event.ClickBlockEvent;
 import net.ccbluex.liquidbounce.event.KeyEvent;
 import net.ccbluex.liquidbounce.event.TickEvent;
+import net.ccbluex.liquidbounce.features.module.modules.combat.AutoClicker;
 import net.ccbluex.liquidbounce.ui.client.GuiUpdate;
 import net.ccbluex.liquidbounce.ui.client.GuiWelcome;
+import net.ccbluex.liquidbounce.utils.CPSCounter;
 import net.ccbluex.liquidbounce.utils.render.IconUtils;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.minecraft.block.Block;
@@ -1424,6 +1426,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	}
 
 	private void clickMouse() {
+		CPSCounter.registerClick(CPSCounter.MouseButton.LEFT);
+
+		if (AutoClicker.Companion.getInstance().getState())
+			leftClickCounter = 0;
+
 		if (this.leftClickCounter <= 0) {
 			this.thePlayer.swingItem();
 
