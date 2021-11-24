@@ -37,6 +37,15 @@ import static org.lwjgl.opengl.GL11.*;
 
 @ModuleInfo(name = "ESP", description = "Allows you to see targets through walls.", category = ModuleCategory.RENDER)
 public class ESP extends Module {
+    private static ESP instance;
+
+    public static ESP getInstance(){
+        return instance;
+    }
+
+    public ESP(){
+        instance = this;
+    }
 
     public static boolean renderNameTags = true;
     public final ListValue modeValue = new ListValue("Mode", new String[]{"Box", "OtherBox", "WireFrame", "2D", "Real2D", "Outline", "ShaderOutline", "ShaderGlow"}, "Box");
