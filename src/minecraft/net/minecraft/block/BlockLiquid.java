@@ -2,6 +2,7 @@ package net.minecraft.block;
 
 import java.util.Random;
 
+import net.ccbluex.liquidbounce.features.module.modules.world.Liquids;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
@@ -71,6 +72,10 @@ public abstract class BlockLiquid extends Block {
 	}
 
 	public boolean canCollideCheck(IBlockState state, boolean hitIfLiquid) {
+		if(Liquids.Companion.getInstance().getState()){
+			return true;
+		}
+
 		return hitIfLiquid && ((Integer) state.getValue(LEVEL)).intValue() == 0;
 	}
 
