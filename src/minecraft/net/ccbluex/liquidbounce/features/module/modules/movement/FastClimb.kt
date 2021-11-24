@@ -19,6 +19,14 @@ import net.minecraft.util.EnumFacing
 
 @ModuleInfo(name = "FastClimb", description = "Allows you to climb up ladders and vines faster.", category = ModuleCategory.MOVEMENT)
 class FastClimb : Module() {
+    // god dammit
+    companion object {
+        var instance: FastClimb? = null
+    }
+
+    init {
+        instance = this
+    }
 
     val modeValue = ListValue("Mode",
             arrayOf("Vanilla", "Clip", "AAC3.0.0", "AAC3.0.5", "SAAC3.1.2", "AAC3.1.2"), "Vanilla")
