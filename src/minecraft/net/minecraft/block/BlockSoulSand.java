@@ -1,5 +1,6 @@
 package net.minecraft.block;
 
+import net.ccbluex.liquidbounce.features.module.modules.movement.NoSlow;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -17,14 +18,16 @@ public class BlockSoulSand extends Block {
 
 	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
 		float f = 0.125F;
-		return new AxisAlignedBB((double) pos.getX(), (double) pos.getY(), (double) pos.getZ(), (double) (pos.getX() + 1), (double) ((float) (pos.getY() + 1) - f), (double) (pos.getZ() + 1));
+		return new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, (float) (pos.getY() + 1) - f, pos.getZ() + 1);
 	}
 
 	/**
 	 * Called When an Entity Collided with the Block
 	 */
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
-		entityIn.motionX *= 0.4D;
-		entityIn.motionZ *= 0.4D;
+        if(!NoSlow.Companion.getInstance().getState() || NoSlow.Companion.getInstance().getSoulsandValue().get()){
+            entityIn.motionX *= 0.4D;
+            entityIn.motionZ *= 0.4D;
+        }
 	}
 }
