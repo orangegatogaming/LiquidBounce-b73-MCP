@@ -14,6 +14,15 @@ import net.minecraft.network.play.client.C0BPacketEntityAction;
 
 @ModuleInfo(name = "Sneak", description = "Automatically sneaks all the time.", category = ModuleCategory.MOVEMENT)
 public class Sneak extends Module {
+    private static Sneak instance;
+
+    public static Sneak getInstance(){
+        return instance;
+    }
+
+    public Sneak(){
+        instance = this;
+    }
 
     public final ListValue modeValue = new ListValue("Mode", new String[] {"Legit", "Vanilla", "Switch", "MineSecure"}, "MineSecure");
     public final BoolValue stopMoveValue = new BoolValue("StopMove", false);
