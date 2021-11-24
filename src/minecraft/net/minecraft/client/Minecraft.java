@@ -42,6 +42,7 @@ import net.ccbluex.liquidbounce.event.ClickBlockEvent;
 import net.ccbluex.liquidbounce.event.KeyEvent;
 import net.ccbluex.liquidbounce.event.TickEvent;
 import net.ccbluex.liquidbounce.features.module.modules.combat.AutoClicker;
+import net.ccbluex.liquidbounce.features.module.modules.world.FastPlace;
 import net.ccbluex.liquidbounce.ui.client.GuiUpdate;
 import net.ccbluex.liquidbounce.ui.client.GuiWelcome;
 import net.ccbluex.liquidbounce.utils.CPSCounter;
@@ -1470,6 +1471,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	 * Called when user clicked he's mouse right button (place)
 	 */
 	public void rightClickMouse() {
+		CPSCounter.registerClick(CPSCounter.MouseButton.RIGHT);
+
+		final FastPlace fastPlace = FastPlace.Companion.getInstance();
+
+		if (fastPlace.getState())
+			rightClickDelayTimer = fastPlace.getSpeedValue().get();
+
 		if (!this.playerController.getIsHittingBlock()) {
 			this.rightClickDelayTimer = 4;
 			boolean flag = true;
@@ -2205,6 +2213,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	 * Called when user clicked he's mouse middle button (pick block)
 	 */
 	private void middleClickMouse() {
+		CPSCounter.registerClick(CPSCounter.MouseButton.MIDDLE);
+
 		if (this.objectMouseOver != null) {
 			boolean flag = this.thePlayer.capabilities.isCreativeMode;
 			int i = 0;
