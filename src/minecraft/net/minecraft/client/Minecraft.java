@@ -946,24 +946,30 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		}
 
 		if (guiScreenIn == null && this.theWorld == null) {
-			guiScreenIn = new GuiMainMenu();
+			guiScreenIn = new net.ccbluex.liquidbounce.ui.client.GuiMainMenu();
 		} else if (guiScreenIn == null && this.thePlayer.getHealth() <= 0.0F) {
 			guiScreenIn = new GuiGameOver();
 		}
 
 		if (guiScreenIn instanceof GuiMainMenu) {
+			// TODO: See if this works
+			guiScreenIn = new net.ccbluex.liquidbounce.ui.client.GuiMainMenu();
+
+			ScaledResolution sc = new ScaledResolution(this);
+			currentScreen.setWorldAndResolution(this, sc.getScaledWidth(), sc.getScaledHeight());
+
 			this.gameSettings.showDebugInfo = false;
 			this.ingameGUI.getChatGUI().clearChatMessages();
 		}
 
-		this.currentScreen = (GuiScreen) guiScreenIn;
+		this.currentScreen = guiScreenIn;
 
 		if (guiScreenIn != null) {
 			this.setIngameNotInFocus();
 			ScaledResolution scaledresolution = new ScaledResolution(this);
 			int i = scaledresolution.getScaledWidth();
 			int j = scaledresolution.getScaledHeight();
-			((GuiScreen) guiScreenIn).setWorldAndResolution(this, i, j);
+			guiScreenIn.setWorldAndResolution(this, i, j);
 			this.skipRenderWorld = false;
 		} else {
 			this.mcSoundHandler.resumeSounds();
