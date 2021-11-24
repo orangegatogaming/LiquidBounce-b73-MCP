@@ -84,7 +84,7 @@ public class NameTags extends Module {
         String nameColor = bot ? "§3" : entity.isInvisible() ? "§6" : entity.isSneaking() ? "§4" : "§7";
         int ping = entity instanceof EntityPlayer ? EntityUtils.getPing((EntityPlayer) entity) : 0;
 
-        String distanceText = distanceValue.get() ? String.format("§7%sm ", Math.round(mc.thePlayer.getDistanceToEntity(entity))) : "";
+        String distanceText = distanceValue.get() ? "§7"+Math.round(mc.thePlayer.getDistanceToEntity(entity))+"m " : "";
         String pingText = pingValue.get() && entity instanceof EntityPlayer ? (ping > 200 ? "§c" : ping > 100 ? "§e" : "§a") + ping + "ms §7" : "";
         String healthText = healthValue.get() ? "§7§c " + Math.round(entity.getHealth()) + " HP" : "";
         String botText = bot ? " §c§lBot" : "";
