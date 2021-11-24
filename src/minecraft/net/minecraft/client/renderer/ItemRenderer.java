@@ -1,5 +1,8 @@
 package net.minecraft.client.renderer;
 
+import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura;
+import net.ccbluex.liquidbounce.features.module.modules.render.AntiBlind;
+import net.ccbluex.liquidbounce.features.module.modules.render.SwingAnimation;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -342,10 +345,12 @@ public class ItemRenderer {
 		GlStateManager.pushMatrix();
 
 		if (this.itemToRender != null) {
+			KillAura auraXDDD = KillAura.Companion.getInstance();
+
 			if (this.itemToRender.getItem() == Items.filled_map) {
 				this.renderItemMap(abstractclientplayer, f2, equipProgress, swingProgress);
 			} else if (abstractclientplayer.getItemInUseCount() > 0) {
-				EnumAction enumaction = this.itemToRender.getItemUseAction();
+				EnumAction enumaction = auraXDDD.getBlockingStatus() ? EnumAction.BLOCK : this.itemToRender.getItemUseAction();
 
 				switch (enumaction) {
 					case NONE:
@@ -359,7 +364,7 @@ public class ItemRenderer {
 						break;
 
 					case BLOCK:
-						this.transformFirstPersonItem(equipProgress, 0.0F);
+						this.transformFirstPersonItem(equipProgress, swingProgress);
 						this.doBlockTransformations();
 						break;
 
@@ -368,7 +373,10 @@ public class ItemRenderer {
 						this.doBowTransformations(partialTicks, abstractclientplayer);
 				}
 			} else {
-				this.doItemUsedTransformations(swingProgress);
+
+				if(!SwingAnimation.getInstance().getState())
+					this.doItemUsedTransformations(swingProgress);
+
 				this.transformFirstPersonItem(equipProgress, swingProgress);
 			}
 
@@ -496,7 +504,7 @@ public class ItemRenderer {
 	private void renderFireInFirstPerson(float partialTicks) {
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 0.9F);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, AntiBlind.getInstance().getState() ? AntiBlind.getInstance().fireEffect.get() : 0.9f);
 		GlStateManager.depthFunc(519);
 		GlStateManager.depthMask(false);
 		GlStateManager.enableBlend();
