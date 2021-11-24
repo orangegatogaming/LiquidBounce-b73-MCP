@@ -13,6 +13,15 @@ import net.minecraft.potion.Potion;
 
 @ModuleInfo(name = "Sprint", description = "Automatically sprints all the time.", category = ModuleCategory.MOVEMENT)
 public class Sprint extends Module {
+    private static Sprint instance;
+
+    public static Sprint getInstance() {
+        return instance;
+    }
+
+    public Sprint(){
+        instance = this;
+    }
 
     public final BoolValue allDirectionsValue = new BoolValue("AllDirections", true);
     public final BoolValue blindnessValue = new BoolValue("Blindness", true);

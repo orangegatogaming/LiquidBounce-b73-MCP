@@ -35,7 +35,15 @@ import java.awt.*;
 
 @ModuleInfo(name = "Scaffold", description = "Automatically places blocks beneath your feet.", category = ModuleCategory.WORLD, keyBind = Keyboard.KEY_I)
 public class Scaffold extends Module {
+    private static Scaffold instance;
 
+    public static Scaffold getInstance(){
+        return instance;
+    }
+
+    public Scaffold(){
+        instance = this;
+    }
     /**
      * OPTIONS
      */
