@@ -38,7 +38,7 @@ public class RealmsMth
 
     public static int clamp(int p_clamp_0_, int p_clamp_1_, int p_clamp_2_)
     {
-        return MathHelper.clamp_int(p_clamp_0_, p_clamp_1_, p_clamp_2_);
+        return MathHelper.clamp(p_clamp_0_, p_clamp_1_, p_clamp_2_);
     }
 
     public static double clampedLerp(double p_clampedLerp_0_, double p_clampedLerp_2_, double p_clampedLerp_4_)
@@ -68,7 +68,7 @@ public class RealmsMth
 
     public static double clamp(double p_clamp_0_, double p_clamp_2_, double p_clamp_4_)
     {
-        return MathHelper.clamp_double(p_clamp_0_, p_clamp_2_, p_clamp_4_);
+        return MathHelper.clamp(p_clamp_0_, p_clamp_2_, p_clamp_4_);
     }
 
     public static int getInt(String p_getInt_0_, int p_getInt_1_)
@@ -138,7 +138,7 @@ public class RealmsMth
 
     public static float clamp(float p_clamp_0_, float p_clamp_1_, float p_clamp_2_)
     {
-        return MathHelper.clamp_float(p_clamp_0_, p_clamp_1_, p_clamp_2_);
+        return MathHelper.clamp(p_clamp_0_, p_clamp_1_, p_clamp_2_);
     }
 
     public static double getDouble(String p_getDouble_0_, double p_getDouble_1_, double p_getDouble_3_)

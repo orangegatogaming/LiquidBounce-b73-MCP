@@ -153,7 +153,7 @@ public class GuiAchievements extends GuiScreen implements IProgressMeter
                 this.field_146570_r -= 0.25F;
             }
 
-            this.field_146570_r = MathHelper.clamp_float(this.field_146570_r, 1.0F, 2.0F);
+            this.field_146570_r = MathHelper.clamp(this.field_146570_r, 1.0F, 2.0F);
 
             if (this.field_146570_r != f3)
             {

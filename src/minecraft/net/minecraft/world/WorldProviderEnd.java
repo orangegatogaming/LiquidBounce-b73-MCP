@@ -51,7 +51,7 @@ public class WorldProviderEnd extends WorldProvider
     {
         int i = 10518688;
         float f = MathHelper.cos(p_76562_1_ * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
-        f = MathHelper.clamp_float(f, 0.0F, 1.0F);
+        f = MathHelper.clamp(f, 0.0F, 1.0F);
         float f1 = (float)(i >> 16 & 255) / 255.0F;
         float f2 = (float)(i >> 8 & 255) / 255.0F;
         float f3 = (float)(i & 255) / 255.0F;

@@ -291,7 +291,7 @@ public class GuiIngame extends Gui
                 i2 = (int)(f3 * 255.0F / (float)this.titleFadeOut);
             }
 
-            i2 = MathHelper.clamp_int(i2, 0, 255);
+            i2 = MathHelper.clamp(i2, 0, 255);
 
             if (i2 > 8)
             {
@@ -956,7 +956,7 @@ public class GuiIngame extends Gui
     private void renderVignette(float lightLevel, ScaledResolution scaledRes)
     {
         lightLevel = 1.0F - lightLevel;
-        lightLevel = MathHelper.clamp_float(lightLevel, 0.0F, 1.0F);
+        lightLevel = MathHelper.clamp(lightLevel, 0.0F, 1.0F);
         WorldBorder worldborder = this.mc.theWorld.getWorldBorder();
         float f = (float)worldborder.getClosestDistance(this.mc.thePlayer);
         double d0 = Math.min(worldborder.getResizeSpeed() * (double)worldborder.getWarningTime() * 1000.0D, Math.abs(worldborder.getTargetSize() - worldborder.getDiameter()));

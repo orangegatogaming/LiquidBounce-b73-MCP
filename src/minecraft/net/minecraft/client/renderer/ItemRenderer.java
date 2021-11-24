@@ -135,7 +135,7 @@ public class ItemRenderer
     private float getMapAngleFromPitch(float pitch)
     {
         float f = 1.0F - pitch / 45.0F + 0.1F;
-        f = MathHelper.clamp_float(f, 0.0F, 1.0F);
+        f = MathHelper.clamp(f, 0.0F, 1.0F);
         f = -MathHelper.cos(f * (float)Math.PI) * 0.5F + 0.5F;
         return f;
     }
@@ -603,7 +603,7 @@ public class ItemRenderer
 
         float f = 0.4F;
         float f1 = flag ? 0.0F : 1.0F;
-        float f2 = MathHelper.clamp_float(f1 - this.equippedProgress, -f, f);
+        float f2 = MathHelper.clamp(f1 - this.equippedProgress, -f, f);
         this.equippedProgress += f2;
 
         if (this.equippedProgress < 0.1F)

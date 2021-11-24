@@ -1379,18 +1379,18 @@ public class GameSettings
 
         public float normalizeValue(float value)
         {
-            return MathHelper.clamp_float((this.snapToStepClamp(value) - this.valueMin) / (this.valueMax - this.valueMin), 0.0F, 1.0F);
+            return MathHelper.clamp((this.snapToStepClamp(value) - this.valueMin) / (this.valueMax - this.valueMin), 0.0F, 1.0F);
         }
 
         public float denormalizeValue(float value)
         {
-            return this.snapToStepClamp(this.valueMin + (this.valueMax - this.valueMin) * MathHelper.clamp_float(value, 0.0F, 1.0F));
+            return this.snapToStepClamp(this.valueMin + (this.valueMax - this.valueMin) * MathHelper.clamp(value, 0.0F, 1.0F));
         }
 
         public float snapToStepClamp(float value)
         {
             value = this.snapToStep(value);
-            return MathHelper.clamp_float(value, this.valueMin, this.valueMax);
+            return MathHelper.clamp(value, this.valueMin, this.valueMax);
         }
 
         protected float snapToStep(float value)

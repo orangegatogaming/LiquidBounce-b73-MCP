@@ -34,18 +34,18 @@ public class RealmsSliderButton extends RealmsButton
 
     public float toPct(float p_toPct_1_)
     {
-        return MathHelper.clamp_float((this.clamp(p_toPct_1_) - this.minValue) / (this.maxValue - this.minValue), 0.0F, 1.0F);
+        return MathHelper.clamp((this.clamp(p_toPct_1_) - this.minValue) / (this.maxValue - this.minValue), 0.0F, 1.0F);
     }
 
     public float toValue(float p_toValue_1_)
     {
-        return this.clamp(this.minValue + (this.maxValue - this.minValue) * MathHelper.clamp_float(p_toValue_1_, 0.0F, 1.0F));
+        return this.clamp(this.minValue + (this.maxValue - this.minValue) * MathHelper.clamp(p_toValue_1_, 0.0F, 1.0F));
     }
 
     public float clamp(float p_clamp_1_)
     {
         p_clamp_1_ = this.clampSteps(p_clamp_1_);
-        return MathHelper.clamp_float(p_clamp_1_, this.minValue, this.maxValue);
+        return MathHelper.clamp(p_clamp_1_, this.minValue, this.maxValue);
     }
 
     protected float clampSteps(float p_clampSteps_1_)
@@ -70,7 +70,7 @@ public class RealmsSliderButton extends RealmsButton
             if (this.sliding)
             {
                 this.value = (float)(p_renderBg_1_ - (this.getProxy().xPosition + 4)) / (float)(this.getProxy().getButtonWidth() - 8);
-                this.value = MathHelper.clamp_float(this.value, 0.0F, 1.0F);
+                this.value = MathHelper.clamp(this.value, 0.0F, 1.0F);
                 float f = this.toValue(this.value);
                 this.clicked(f);
                 this.value = this.toPct(f);
@@ -87,7 +87,7 @@ public class RealmsSliderButton extends RealmsButton
     public void clicked(int p_clicked_1_, int p_clicked_2_)
     {
         this.value = (float)(p_clicked_1_ - (this.getProxy().xPosition + 4)) / (float)(this.getProxy().getButtonWidth() - 8);
-        this.value = MathHelper.clamp_float(this.value, 0.0F, 1.0F);
+        this.value = MathHelper.clamp(this.value, 0.0F, 1.0F);
         this.clicked(this.toValue(this.value));
         this.getProxy().displayString = this.getMessage();
         this.sliding = true;

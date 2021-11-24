@@ -535,7 +535,7 @@ public class BlockChest extends BlockContainer
                 i = ((TileEntityChest)tileentity).numPlayersUsing;
             }
 
-            return MathHelper.clamp_int(i, 0, 15);
+            return MathHelper.clamp(i, 0, 15);
         }
     }
 

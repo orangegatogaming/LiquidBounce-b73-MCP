@@ -1032,8 +1032,8 @@ public class Chunk
     {
         int i = MathHelper.floor_double((aabb.minY - 2.0D) / 16.0D);
         int j = MathHelper.floor_double((aabb.maxY + 2.0D) / 16.0D);
-        i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
-        j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
+        i = MathHelper.clamp(i, 0, this.entityLists.length - 1);
+        j = MathHelper.clamp(j, 0, this.entityLists.length - 1);
 
         for (int k = i; k <= j; ++k)
         {
@@ -1072,8 +1072,8 @@ public class Chunk
     {
         int i = MathHelper.floor_double((aabb.minY - 2.0D) / 16.0D);
         int j = MathHelper.floor_double((aabb.maxY + 2.0D) / 16.0D);
-        i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
-        j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
+        i = MathHelper.clamp(i, 0, this.entityLists.length - 1);
+        j = MathHelper.clamp(j, 0, this.entityLists.length - 1);
 
         for (int k = i; k <= j; ++k)
         {

@@ -312,7 +312,7 @@ class EditorPanel(private val hudDesigner: GuiHudDesigner, var x: Int, var y: In
                     // Slider changer
                     if (mouseX >= x + 8 && mouseX <= x + prevWidth && mouseY >= y + height + 9 && mouseY <= y + height + 15 &&
                             Mouse.isButtonDown(0)) {
-                        val curr = MathHelper.clamp_float((mouseX - x - 8F) / (prevWidth - 18F), 0F, 1F)
+                        val curr = MathHelper.clamp((mouseX - x - 8F) / (prevWidth - 18F), 0F, 1F)
 
                         value.set(min + (max - min) * curr)
                     }
@@ -347,7 +347,7 @@ class EditorPanel(private val hudDesigner: GuiHudDesigner, var x: Int, var y: In
                     // Slider changer
                     if (mouseX >= x + 8 && mouseX <= x + prevWidth && mouseY >= y + height + 9 && mouseY <= y + height + 15 &&
                             Mouse.isButtonDown(0)) {
-                        val curr = MathHelper.clamp_float((mouseX - x - 8F) / (prevWidth - 18F), 0F, 1F)
+                        val curr = MathHelper.clamp((mouseX - x - 8F) / (prevWidth - 18F), 0F, 1F)
 
                         value.set((min + (max - min) * curr).toInt())
                     }

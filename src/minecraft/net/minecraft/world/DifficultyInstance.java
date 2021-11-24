@@ -33,11 +33,11 @@ public class DifficultyInstance
         {
             boolean flag = difficulty == EnumDifficulty.HARD;
             float f = 0.75F;
-            float f1 = MathHelper.clamp_float(((float)worldTime + -72000.0F) / 1440000.0F, 0.0F, 1.0F) * 0.25F;
+            float f1 = MathHelper.clamp(((float)worldTime + -72000.0F) / 1440000.0F, 0.0F, 1.0F) * 0.25F;
             f = f + f1;
             float f2 = 0.0F;
-            f2 = f2 + MathHelper.clamp_float((float)chunkInhabitedTime / 3600000.0F, 0.0F, 1.0F) * (flag ? 1.0F : 0.75F);
-            f2 = f2 + MathHelper.clamp_float(moonPhaseFactor * 0.25F, 0.0F, f1);
+            f2 = f2 + MathHelper.clamp((float)chunkInhabitedTime / 3600000.0F, 0.0F, 1.0F) * (flag ? 1.0F : 0.75F);
+            f2 = f2 + MathHelper.clamp(moonPhaseFactor * 0.25F, 0.0F, f1);
 
             if (difficulty == EnumDifficulty.EASY)
             {

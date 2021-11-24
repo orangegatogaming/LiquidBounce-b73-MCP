@@ -38,7 +38,7 @@ public class SlowlyStyle extends Style {
         RenderUtils.drawFilledCircle((int) sliderValue, y + 1, 3, color);
 
         if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + 3 && Mouse.isButtonDown(0)) {
-            double i = MathHelper.clamp_double(((double) mouseX - (double) x) / ((double) width - 3), 0, 1);
+            double i = MathHelper.clamp(((double) mouseX - (double) x) / ((double) width - 3), 0, 1);
 
             BigDecimal bigDecimal = new BigDecimal(Double.toString((min + (max - min) * i)));
             bigDecimal = bigDecimal.setScale(2, 4);

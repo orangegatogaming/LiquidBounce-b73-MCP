@@ -357,7 +357,7 @@ public class EntityHorse extends EntityAnimal implements IInvBasic
 
     public int increaseTemper(int p_110198_1_)
     {
-        int i = MathHelper.clamp_int(this.getTemper() + p_110198_1_, 0, this.getMaxTemper());
+        int i = MathHelper.clamp(this.getTemper() + p_110198_1_, 0, this.getMaxTemper());
         this.setTemper(i);
         return i;
     }

@@ -159,67 +159,67 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
         switch (p_175319_1_)
         {
             case 132:
-                f1 = this.field_175336_F.mainNoiseScaleX = MathHelper.clamp_float(f, 1.0F, 5000.0F);
+                f1 = this.field_175336_F.mainNoiseScaleX = MathHelper.clamp(f, 1.0F, 5000.0F);
                 break;
 
             case 133:
-                f1 = this.field_175336_F.mainNoiseScaleY = MathHelper.clamp_float(f, 1.0F, 5000.0F);
+                f1 = this.field_175336_F.mainNoiseScaleY = MathHelper.clamp(f, 1.0F, 5000.0F);
                 break;
 
             case 134:
-                f1 = this.field_175336_F.mainNoiseScaleZ = MathHelper.clamp_float(f, 1.0F, 5000.0F);
+                f1 = this.field_175336_F.mainNoiseScaleZ = MathHelper.clamp(f, 1.0F, 5000.0F);
                 break;
 
             case 135:
-                f1 = this.field_175336_F.depthNoiseScaleX = MathHelper.clamp_float(f, 1.0F, 2000.0F);
+                f1 = this.field_175336_F.depthNoiseScaleX = MathHelper.clamp(f, 1.0F, 2000.0F);
                 break;
 
             case 136:
-                f1 = this.field_175336_F.depthNoiseScaleZ = MathHelper.clamp_float(f, 1.0F, 2000.0F);
+                f1 = this.field_175336_F.depthNoiseScaleZ = MathHelper.clamp(f, 1.0F, 2000.0F);
                 break;
 
             case 137:
-                f1 = this.field_175336_F.depthNoiseScaleExponent = MathHelper.clamp_float(f, 0.01F, 20.0F);
+                f1 = this.field_175336_F.depthNoiseScaleExponent = MathHelper.clamp(f, 0.01F, 20.0F);
                 break;
 
             case 138:
-                f1 = this.field_175336_F.baseSize = MathHelper.clamp_float(f, 1.0F, 25.0F);
+                f1 = this.field_175336_F.baseSize = MathHelper.clamp(f, 1.0F, 25.0F);
                 break;
 
             case 139:
-                f1 = this.field_175336_F.coordinateScale = MathHelper.clamp_float(f, 1.0F, 6000.0F);
+                f1 = this.field_175336_F.coordinateScale = MathHelper.clamp(f, 1.0F, 6000.0F);
                 break;
 
             case 140:
-                f1 = this.field_175336_F.heightScale = MathHelper.clamp_float(f, 1.0F, 6000.0F);
+                f1 = this.field_175336_F.heightScale = MathHelper.clamp(f, 1.0F, 6000.0F);
                 break;
 
             case 141:
-                f1 = this.field_175336_F.stretchY = MathHelper.clamp_float(f, 0.01F, 50.0F);
+                f1 = this.field_175336_F.stretchY = MathHelper.clamp(f, 0.01F, 50.0F);
                 break;
 
             case 142:
-                f1 = this.field_175336_F.upperLimitScale = MathHelper.clamp_float(f, 1.0F, 5000.0F);
+                f1 = this.field_175336_F.upperLimitScale = MathHelper.clamp(f, 1.0F, 5000.0F);
                 break;
 
             case 143:
-                f1 = this.field_175336_F.lowerLimitScale = MathHelper.clamp_float(f, 1.0F, 5000.0F);
+                f1 = this.field_175336_F.lowerLimitScale = MathHelper.clamp(f, 1.0F, 5000.0F);
                 break;
 
             case 144:
-                f1 = this.field_175336_F.biomeDepthWeight = MathHelper.clamp_float(f, 1.0F, 20.0F);
+                f1 = this.field_175336_F.biomeDepthWeight = MathHelper.clamp(f, 1.0F, 20.0F);
                 break;
 
             case 145:
-                f1 = this.field_175336_F.biomeDepthOffset = MathHelper.clamp_float(f, 0.0F, 20.0F);
+                f1 = this.field_175336_F.biomeDepthOffset = MathHelper.clamp(f, 0.0F, 20.0F);
                 break;
 
             case 146:
-                f1 = this.field_175336_F.biomeScaleWeight = MathHelper.clamp_float(f, 1.0F, 20.0F);
+                f1 = this.field_175336_F.biomeScaleWeight = MathHelper.clamp(f, 1.0F, 20.0F);
                 break;
 
             case 147:
-                f1 = this.field_175336_F.biomeScaleOffset = MathHelper.clamp_float(f, 0.0F, 20.0F);
+                f1 = this.field_175336_F.biomeScaleOffset = MathHelper.clamp(f, 0.0F, 20.0F);
         }
 
         if (f1 != f && f != 0.0F)
@@ -751,7 +751,7 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
                             if (guibutton instanceof GuiSlider)
                             {
                                 float f = ((GuiSlider)guibutton).func_175217_d() * (0.75F + this.random.nextFloat() * 0.5F) + (this.random.nextFloat() * 0.1F - 0.05F);
-                                ((GuiSlider)guibutton).func_175219_a(MathHelper.clamp_float(f, 0.0F, 1.0F));
+                                ((GuiSlider)guibutton).func_175219_a(MathHelper.clamp(f, 0.0F, 1.0F));
                             }
                             else if (guibutton instanceof GuiListButton)
                             {
@@ -768,7 +768,7 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
                             if (guibutton1 instanceof GuiSlider)
                             {
                                 float f1 = ((GuiSlider)guibutton1).func_175217_d() * (0.75F + this.random.nextFloat() * 0.5F) + (this.random.nextFloat() * 0.1F - 0.05F);
-                                ((GuiSlider)guibutton1).func_175219_a(MathHelper.clamp_float(f1, 0.0F, 1.0F));
+                                ((GuiSlider)guibutton1).func_175219_a(MathHelper.clamp(f1, 0.0F, 1.0F));
                             }
                             else if (guibutton1 instanceof GuiListButton)
                             {

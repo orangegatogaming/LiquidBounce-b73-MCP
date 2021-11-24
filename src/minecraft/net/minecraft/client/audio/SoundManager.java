@@ -418,7 +418,7 @@ public class SoundManager
      */
     private float getNormalizedPitch(ISound sound, SoundPoolEntry entry)
     {
-        return (float)MathHelper.clamp_double((double)sound.getPitch() * entry.getPitch(), 0.5D, 2.0D);
+        return (float)MathHelper.clamp((double)sound.getPitch() * entry.getPitch(), 0.5D, 2.0D);
     }
 
     /**
@@ -426,7 +426,7 @@ public class SoundManager
      */
     private float getNormalizedVolume(ISound sound, SoundPoolEntry entry, SoundCategory category)
     {
-        return (float)MathHelper.clamp_double((double)sound.getVolume() * entry.getVolume(), 0.0D, 1.0D) * this.getSoundCategoryVolume(category);
+        return (float)MathHelper.clamp((double)sound.getVolume() * entry.getVolume(), 0.0D, 1.0D) * this.getSoundCategoryVolume(category);
     }
 
     /**

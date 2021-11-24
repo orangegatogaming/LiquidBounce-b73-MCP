@@ -402,8 +402,8 @@ public abstract class EntityPlayer extends EntityLivingBase
         }
 
         int i = 29999999;
-        double d3 = MathHelper.clamp_double(this.posX, -2.9999999E7D, 2.9999999E7D);
-        double d4 = MathHelper.clamp_double(this.posZ, -2.9999999E7D, 2.9999999E7D);
+        double d3 = MathHelper.clamp(this.posX, -2.9999999E7D, 2.9999999E7D);
+        double d4 = MathHelper.clamp(this.posZ, -2.9999999E7D, 2.9999999E7D);
 
         if (d3 != this.posX || d4 != this.posZ)
         {

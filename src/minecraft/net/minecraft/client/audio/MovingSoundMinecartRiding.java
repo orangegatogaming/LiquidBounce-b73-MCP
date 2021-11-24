@@ -31,7 +31,7 @@ public class MovingSoundMinecartRiding extends MovingSound
 
             if ((double)f >= 0.01D)
             {
-                this.volume = 0.0F + MathHelper.clamp_float(f, 0.0F, 1.0F) * 0.75F;
+                this.volume = 0.0F + MathHelper.clamp(f, 0.0F, 1.0F) * 0.75F;
             }
             else
             {

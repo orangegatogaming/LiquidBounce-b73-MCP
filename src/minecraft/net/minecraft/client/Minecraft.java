@@ -1641,7 +1641,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 							if (this.ingameGUI.getSpectatorGui().func_175262_a()) {
 								this.ingameGUI.getSpectatorGui().func_175259_b(-j);
 							} else {
-								float f = MathHelper.clamp_float(this.thePlayer.capabilities.getFlySpeed() + (float) j * 0.005F, 0.0F, 0.2F);
+								float f = MathHelper.clamp(this.thePlayer.capabilities.getFlySpeed() + (float) j * 0.005F, 0.0F, 0.2F);
 								this.thePlayer.capabilities.setFlySpeed(f);
 							}
 						} else {

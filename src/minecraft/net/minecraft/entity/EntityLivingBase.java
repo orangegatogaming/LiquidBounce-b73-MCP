@@ -854,7 +854,7 @@ public abstract class EntityLivingBase extends Entity
 
     public void setHealth(float health)
     {
-        this.dataWatcher.updateObject(6, Float.valueOf(MathHelper.clamp_float(health, 0.0F, this.getMaxHealth())));
+        this.dataWatcher.updateObject(6, Float.valueOf(MathHelper.clamp(health, 0.0F, this.getMaxHealth())));
     }
 
     /**
@@ -1637,8 +1637,8 @@ public abstract class EntityLivingBase extends Entity
                     if (this.isOnLadder())
                     {
                         float f6 = 0.15F;
-                        this.motionX = MathHelper.clamp_double(this.motionX, (double)(-f6), (double)f6);
-                        this.motionZ = MathHelper.clamp_double(this.motionZ, (double)(-f6), (double)f6);
+                        this.motionX = MathHelper.clamp(this.motionX, (double)(-f6), (double)f6);
+                        this.motionZ = MathHelper.clamp(this.motionZ, (double)(-f6), (double)f6);
                         this.fallDistance = 0.0F;
 
                         if (this.motionY < -0.15D)

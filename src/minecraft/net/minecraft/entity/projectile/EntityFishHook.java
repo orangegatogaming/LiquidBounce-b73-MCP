@@ -581,8 +581,8 @@ public class EntityFishHook extends Entity
         int j = EnchantmentHelper.getLureModifier(this.angler);
         float f1 = 0.1F - (float)i * 0.025F - (float)j * 0.01F;
         float f2 = 0.05F + (float)i * 0.01F - (float)j * 0.01F;
-        f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);
-        f2 = MathHelper.clamp_float(f2, 0.0F, 1.0F);
+        f1 = MathHelper.clamp(f1, 0.0F, 1.0F);
+        f2 = MathHelper.clamp(f2, 0.0F, 1.0F);
 
         if (f < f1)
         {

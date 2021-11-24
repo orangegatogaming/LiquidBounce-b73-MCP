@@ -130,7 +130,7 @@ public class EntityAIArrowAttack extends EntityAIBase
             }
 
             float f = MathHelper.sqrt_double(d0) / this.field_96562_i;
-            float lvt_5_1_ = MathHelper.clamp_float(f, 0.1F, 1.0F);
+            float lvt_5_1_ = MathHelper.clamp(f, 0.1F, 1.0F);
             this.rangedAttackEntityHost.attackEntityWithRangedAttack(this.attackTarget, lvt_5_1_);
             this.rangedAttackTime = MathHelper.floor_float(f * (float)(this.maxRangedAttackTime - this.field_96561_g) + (float)this.field_96561_g);
         }

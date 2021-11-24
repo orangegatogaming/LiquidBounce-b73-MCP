@@ -49,7 +49,7 @@ public class GuiOptionSlider extends GuiButton
             if (this.dragging)
             {
                 this.sliderValue = (float)(mouseX - (this.xPosition + 4)) / (float)(this.width - 8);
-                this.sliderValue = MathHelper.clamp_float(this.sliderValue, 0.0F, 1.0F);
+                this.sliderValue = MathHelper.clamp(this.sliderValue, 0.0F, 1.0F);
                 float f = this.options.denormalizeValue(this.sliderValue);
                 mc.gameSettings.setOptionFloatValue(this.options, f);
                 this.sliderValue = this.options.normalizeValue(f);
@@ -72,7 +72,7 @@ public class GuiOptionSlider extends GuiButton
         if (super.mousePressed(mc, mouseX, mouseY))
         {
             this.sliderValue = (float)(mouseX - (this.xPosition + 4)) / (float)(this.width - 8);
-            this.sliderValue = MathHelper.clamp_float(this.sliderValue, 0.0F, 1.0F);
+            this.sliderValue = MathHelper.clamp(this.sliderValue, 0.0F, 1.0F);
             mc.gameSettings.setOptionFloatValue(this.options, this.options.denormalizeValue(this.sliderValue));
             this.displayString = mc.gameSettings.getKeyBinding(this.options);
             this.dragging = true;
