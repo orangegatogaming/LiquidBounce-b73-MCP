@@ -21,6 +21,13 @@ import net.minecraft.util.EnumFacing
 @ModuleInfo(name = "NoSlow", description = "Cancels slowness effects caused by soulsand and using items.",
         category = ModuleCategory.MOVEMENT)
 class NoSlow : Module() {
+    companion object {
+        var instance: NoSlow? = null
+    }
+
+    init {
+        instance = this
+    }
 
     private val blockForwardMultiplier = FloatValue("BlockForwardMultiplier", 1.0F, 0.2F, 1.0F)
     private val blockStrafeMultiplier = FloatValue("BlockStrafeMultiplier", 1.0F, 0.2F, 1.0F)
