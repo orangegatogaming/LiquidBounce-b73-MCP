@@ -1,5 +1,20 @@
 package net.minecraft.client.entity;
 
+import net.ccbluex.liquidbounce.LiquidBounce;
+import net.ccbluex.liquidbounce.event.*;
+import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura;
+import net.ccbluex.liquidbounce.features.module.modules.exploit.AntiHunger;
+import net.ccbluex.liquidbounce.features.module.modules.exploit.PortalMenu;
+import net.ccbluex.liquidbounce.features.module.modules.fun.Derp;
+import net.ccbluex.liquidbounce.features.module.modules.movement.InventoryMove;
+import net.ccbluex.liquidbounce.features.module.modules.movement.NoSlow;
+import net.ccbluex.liquidbounce.features.module.modules.movement.Sneak;
+import net.ccbluex.liquidbounce.features.module.modules.movement.Sprint;
+import net.ccbluex.liquidbounce.features.module.modules.render.NoSwing;
+import net.ccbluex.liquidbounce.features.module.modules.world.Scaffold;
+import net.ccbluex.liquidbounce.utils.MovementUtils;
+import net.ccbluex.liquidbounce.utils.Rotation;
+import net.ccbluex.liquidbounce.utils.RotationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSoundMinecartRiding;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -29,6 +44,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
@@ -186,67 +202,94 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 	 * called every tick when the player is on foot. Performs all the things that normally happen during movement.
 	 */
 	public void onUpdateWalkingPlayer() {
-		boolean flag = this.isSprinting();
+		try {
+			LiquidBounce.eventManager.callEvent(new MotionEvent(EventState.PRE));
 
-		if (flag != this.serverSprintState) {
-			if (flag) {
-				this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.START_SPRINTING));
-			} else {
-				this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.STOP_SPRINTING));
+			final InventoryMove inventoryMove = InventoryMove.getInstance();
+			final Sneak sneak = Sneak.getInstance();
+			final boolean fakeSprint = (inventoryMove.getState() && inventoryMove.aacAdditionProValue.get()) || AntiHunger.getInstance().getState() || (sneak.getState() && (!MovementUtils.isMoving() || !sneak.stopMoveValue.get()) && sneak.modeValue.get().equalsIgnoreCase("MineSecure"));
+
+			boolean sprinting = this.isSprinting() && !fakeSprint;
+
+			if (sprinting != this.serverSprintState) {
+				if (sprinting)
+					this.sendQueue.addToSendQueue(new C0BPacketEntityAction((EntityPlayerSP) (Object) this, C0BPacketEntityAction.Action.START_SPRINTING));
+				else
+					this.sendQueue.addToSendQueue(new C0BPacketEntityAction((EntityPlayerSP) (Object) this, C0BPacketEntityAction.Action.STOP_SPRINTING));
+
+				this.serverSprintState = sprinting;
 			}
 
-			this.serverSprintState = flag;
-		}
+			boolean sneaking = this.isSneaking();
 
-		boolean flag1 = this.isSneaking();
+			if (sneaking != this.serverSneakState && (!sneak.getState() || sneak.modeValue.get().equalsIgnoreCase("Legit"))) {
+				if (sneaking)
+					this.sendQueue.addToSendQueue(new C0BPacketEntityAction((EntityPlayerSP) (Object) this, C0BPacketEntityAction.Action.START_SNEAKING));
+				else
+					this.sendQueue.addToSendQueue(new C0BPacketEntityAction((EntityPlayerSP) (Object) this, C0BPacketEntityAction.Action.STOP_SNEAKING));
 
-		if (flag1 != this.serverSneakState) {
-			if (flag1) {
-				this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.START_SNEAKING));
-			} else {
-				this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.STOP_SNEAKING));
+				this.serverSneakState = sneaking;
 			}
 
-			this.serverSneakState = flag1;
-		}
+			if (this.isCurrentViewEntity()) {
+				float yaw = rotationYaw;
+				float pitch = rotationPitch;
+				float lastReportedYaw = RotationUtils.serverRotation.getYaw();
+				float lastReportedPitch = RotationUtils.serverRotation.getPitch();
 
-		if (this.isCurrentViewEntity()) {
-			double d0 = this.posX - this.lastReportedPosX;
-			double d1 = this.getEntityBoundingBox().minY - this.lastReportedPosY;
-			double d2 = this.posZ - this.lastReportedPosZ;
-			double d3 = (double) (this.rotationYaw - this.lastReportedYaw);
-			double d4 = (double) (this.rotationPitch - this.lastReportedPitch);
-			boolean flag2 = d0 * d0 + d1 * d1 + d2 * d2 > 9.0E-4D || this.positionUpdateTicks >= 20;
-			boolean flag3 = d3 != 0.0D || d4 != 0.0D;
-
-			if (this.ridingEntity == null) {
-				if (flag2 && flag3) {
-					this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.posX, this.getEntityBoundingBox().minY, this.posZ, this.rotationYaw, this.rotationPitch, this.onGround));
-				} else if (flag2) {
-					this.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(this.posX, this.getEntityBoundingBox().minY, this.posZ, this.onGround));
-				} else if (flag3) {
-					this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(this.rotationYaw, this.rotationPitch, this.onGround));
-				} else {
-					this.sendQueue.addToSendQueue(new C03PacketPlayer(this.onGround));
+				final Derp derp = Derp.getInstance();
+				if (derp.getState()) {
+					float[] rot = derp.getRotation();
+					yaw = rot[0];
+					pitch = rot[1];
 				}
-			} else {
-				this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.motionX, -999.0D, this.motionZ, this.rotationYaw, this.rotationPitch, this.onGround));
-				flag2 = false;
+
+				if (RotationUtils.targetRotation != null) {
+					yaw = RotationUtils.targetRotation.getYaw();
+					pitch = RotationUtils.targetRotation.getPitch();
+				}
+
+				double xDiff = this.posX - this.lastReportedPosX;
+				double yDiff = this.getEntityBoundingBox().minY - this.lastReportedPosY;
+				double zDiff = this.posZ - this.lastReportedPosZ;
+				double yawDiff = yaw - lastReportedYaw;
+				double pitchDiff = pitch - lastReportedPitch;
+				boolean moved = xDiff * xDiff + yDiff * yDiff + zDiff * zDiff > 9.0E-4D || this.positionUpdateTicks >= 20;
+				boolean rotated = yawDiff != 0.0D || pitchDiff != 0.0D;
+
+				if (this.ridingEntity == null) {
+					if (moved && rotated) {
+						this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.posX, this.getEntityBoundingBox().minY, this.posZ, yaw, pitch, this.onGround));
+					} else if (moved) {
+						this.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(this.posX, this.getEntityBoundingBox().minY, this.posZ, this.onGround));
+					} else if (rotated) {
+						this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(yaw, pitch, this.onGround));
+					} else {
+						this.sendQueue.addToSendQueue(new C03PacketPlayer(this.onGround));
+					}
+				} else {
+					this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.motionX, -999.0D, this.motionZ, yaw, pitch, this.onGround));
+					moved = false;
+				}
+
+				++this.positionUpdateTicks;
+
+				if (moved) {
+					this.lastReportedPosX = this.posX;
+					this.lastReportedPosY = this.getEntityBoundingBox().minY;
+					this.lastReportedPosZ = this.posZ;
+					this.positionUpdateTicks = 0;
+				}
+
+				if (rotated) {
+					this.lastReportedYaw = this.rotationYaw;
+					this.lastReportedPitch = this.rotationPitch;
+				}
 			}
 
-			++this.positionUpdateTicks;
-
-			if (flag2) {
-				this.lastReportedPosX = this.posX;
-				this.lastReportedPosY = this.getEntityBoundingBox().minY;
-				this.lastReportedPosZ = this.posZ;
-				this.positionUpdateTicks = 0;
-			}
-
-			if (flag3) {
-				this.lastReportedYaw = this.rotationYaw;
-				this.lastReportedPitch = this.rotationPitch;
-			}
+			LiquidBounce.eventManager.callEvent(new MotionEvent(EventState.POST));
+		} catch (final Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -276,8 +319,12 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 	 * Swings the item the player is holding.
 	 */
 	public void swingItem() {
-		super.swingItem();
-		this.sendQueue.addToSendQueue(new C0APacketAnimation());
+		NoSwing noSwing = NoSwing.getInstance();
+
+		if(!noSwing.getState())
+			super.swingItem();
+		else if(!noSwing.serverSideValue.get())
+			this.sendQueue.addToSendQueue(new C0APacketAnimation());
 	}
 
 	public void respawnPlayer() {
@@ -384,9 +431,10 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 	}
 
 	protected boolean pushOutOfBlocks(double x, double y, double z) {
-		if (this.noClip) {
-			return false;
-		} else {
+		PushOutEvent event = new PushOutEvent();
+		LiquidBounce.eventManager.callEvent(event);
+
+		if (!event.isCancelled() && !this.noClip) {
 			BlockPos blockpos = new BlockPos(x, y, z);
 			double d0 = x - (double) blockpos.getX();
 			double d1 = z - (double) blockpos.getZ();
@@ -434,8 +482,8 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 				}
 			}
 
-			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -607,6 +655,8 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 	 * use this to react to sunlight and start to burn.
 	 */
 	public void onLivingUpdate() {
+		LiquidBounce.eventManager.callEvent(new UpdateEvent());
+
 		if (this.sprintingTicksLeft > 0) {
 			--this.sprintingTicksLeft;
 
@@ -622,8 +672,8 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 		this.prevTimeInPortal = this.timeInPortal;
 
 		if (this.inPortal) {
-			if (this.mc.currentScreen != null && !this.mc.currentScreen.doesGuiPauseGame()) {
-				this.mc.displayGuiScreen((GuiScreen) null);
+			if (this.mc.currentScreen != null && !this.mc.currentScreen.doesGuiPauseGame() && !PortalMenu.getInstance().getState()) {
+				this.mc.displayGuiScreen(null);
 			}
 
 			if (this.timeInPortal == 0.0F) {
@@ -663,9 +713,14 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 		boolean flag2 = this.movementInput.moveForward >= f;
 		this.movementInput.updatePlayerMoveState();
 
-		if (this.isUsingItem() && !this.isRiding()) {
-			this.movementInput.moveStrafe *= 0.2F;
-			this.movementInput.moveForward *= 0.2F;
+		final NoSlow noSlow = NoSlow.getInstance();
+		final KillAura killAura = KillAura.Companion.getInstance();
+
+		if (getHeldItem() != null && (this.isUsingItem() || (getHeldItem().getItem() instanceof ItemSword && killAura.getBlockingStatus())) && !this.isRiding()) {
+			final SlowDownEvent slowDownEvent = new SlowDownEvent(0.2F, 0.2F);
+			LiquidBounce.eventManager.callEvent(slowDownEvent);
+			this.movementInput.moveStrafe *= slowDownEvent.getStrafe();
+			this.movementInput.moveForward *= slowDownEvent.getForward();
 			this.sprintToggleTimer = 0;
 		}
 
@@ -673,7 +728,10 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 		this.pushOutOfBlocks(this.posX - (double) this.width * 0.35D, this.getEntityBoundingBox().minY + 0.5D, this.posZ - (double) this.width * 0.35D);
 		this.pushOutOfBlocks(this.posX + (double) this.width * 0.35D, this.getEntityBoundingBox().minY + 0.5D, this.posZ - (double) this.width * 0.35D);
 		this.pushOutOfBlocks(this.posX + (double) this.width * 0.35D, this.getEntityBoundingBox().minY + 0.5D, this.posZ + (double) this.width * 0.35D);
-		boolean flag3 = (float) this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
+
+		final Sprint sprint = Sprint.getInstance();
+
+		boolean flag3 = !sprint.foodValue.get() || (float) this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
 
 		if (this.onGround && !flag1 && !flag2 && this.movementInput.moveForward >= f && !this.isSprinting() && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness)) {
 			if (this.sprintToggleTimer <= 0 && !this.mc.gameSettings.keyBindSprint.isKeyDown()) {
@@ -683,11 +741,15 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 			}
 		}
 
-		if (!this.isSprinting() && this.movementInput.moveForward >= f && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness) && this.mc.gameSettings.keyBindSprint.isKeyDown()) {
+		if (!this.isSprinting() && this.movementInput.moveForward >= f && flag3 && (noSlow.getState() || !this.isUsingItem()) && !this.isPotionActive(Potion.blindness) && this.mc.gameSettings.keyBindSprint.isKeyDown()) {
 			this.setSprinting(true);
 		}
 
-		if (this.isSprinting() && (this.movementInput.moveForward < f || this.isCollidedHorizontally || !flag3)) {
+		final Scaffold scaffold = Scaffold.getInstance();
+		if ((scaffold.getState() && !scaffold.sprintValue.get()) || (sprint.getState() && sprint.checkServerSide.get() && (onGround || !sprint.checkServerSideGround.get()) && !sprint.allDirectionsValue.get() && RotationUtils.targetRotation != null && RotationUtils.getRotationDifference(new Rotation(mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch)) > 30))
+			this.setSprinting(false);
+
+		if (this.isSprinting() && ((!(sprint.getState() && sprint.allDirectionsValue.get()) && this.movementInput.moveForward < f) || this.isCollidedHorizontally || !flag3)) {
 			this.setSprinting(false);
 		}
 
