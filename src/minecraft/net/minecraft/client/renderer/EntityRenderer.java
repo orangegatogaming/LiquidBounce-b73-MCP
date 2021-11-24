@@ -10,7 +10,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
 
+import net.ccbluex.liquidbounce.LiquidBounce;
+import net.ccbluex.liquidbounce.event.Render3DEvent;
 import net.ccbluex.liquidbounce.features.module.modules.render.AntiBlind;
+import net.ccbluex.liquidbounce.features.module.modules.render.CameraClip;
+import net.ccbluex.liquidbounce.features.module.modules.render.NoHurtCam;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.material.Material;
@@ -545,6 +549,10 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
 	private void hurtCameraEffect(float partialTicks) {
 		if (this.mc.getRenderViewEntity() instanceof EntityLivingBase) {
+			if(NoHurtCam.getInstance().getState()){
+				return;
+			}
+
 			EntityLivingBase entitylivingbase = (EntityLivingBase) this.mc.getRenderViewEntity();
 			float f = (float) entitylivingbase.hurtTime - partialTicks;
 
@@ -611,7 +619,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 				GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, -1.0F, 0.0F, 0.0F);
 			}
 		} else if (this.mc.gameSettings.thirdPersonView > 0) {
-			double d3 = (double) (this.thirdPersonDistanceTemp + (this.thirdPersonDistance - this.thirdPersonDistanceTemp) * partialTicks);
+			double d3 = this.thirdPersonDistanceTemp + (this.thirdPersonDistance - this.thirdPersonDistanceTemp) * partialTicks;
 
 			if (this.mc.gameSettings.debugCamEnable) {
 				GlStateManager.translate(0.0F, 0.0F, (float) (-d3));
@@ -623,24 +631,26 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 					f2 += 180.0F;
 				}
 
-				double d4 = (double) (-MathHelper.sin(f1 / 180.0F * (float) Math.PI) * MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
-				double d5 = (double) (MathHelper.cos(f1 / 180.0F * (float) Math.PI) * MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
-				double d6 = (double) (-MathHelper.sin(f2 / 180.0F * (float) Math.PI)) * d3;
+				if(!CameraClip.getInstance().getState()){
+					double d4 = (double) (-MathHelper.sin(f1 / 180.0F * (float) Math.PI) * MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
+					double d5 = (double) (MathHelper.cos(f1 / 180.0F * (float) Math.PI) * MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
+					double d6 = (double) (-MathHelper.sin(f2 / 180.0F * (float) Math.PI)) * d3;
 
-				for (int i = 0; i < 8; ++i) {
-					float f3 = (float) ((i & 1) * 2 - 1);
-					float f4 = (float) ((i >> 1 & 1) * 2 - 1);
-					float f5 = (float) ((i >> 2 & 1) * 2 - 1);
-					f3 = f3 * 0.1F;
-					f4 = f4 * 0.1F;
-					f5 = f5 * 0.1F;
-					MovingObjectPosition movingobjectposition = this.mc.theWorld.rayTraceBlocks(new Vec3(d0 + (double) f3, d1 + (double) f4, d2 + (double) f5), new Vec3(d0 - d4 + (double) f3 + (double) f5, d1 - d6 + (double) f4, d2 - d5 + (double) f5));
+					for (int i = 0; i < 8; ++i) {
+						float f3 = (float) ((i & 1) * 2 - 1);
+						float f4 = (float) ((i >> 1 & 1) * 2 - 1);
+						float f5 = (float) ((i >> 2 & 1) * 2 - 1);
+						f3 = f3 * 0.1F;
+						f4 = f4 * 0.1F;
+						f5 = f5 * 0.1F;
+						MovingObjectPosition movingobjectposition = this.mc.theWorld.rayTraceBlocks(new Vec3(d0 + (double) f3, d1 + (double) f4, d2 + (double) f5), new Vec3(d0 - d4 + (double) f3 + (double) f5, d1 - d6 + (double) f4, d2 - d5 + (double) f5));
 
-					if (movingobjectposition != null) {
-						double d7 = movingobjectposition.hitVec.distanceTo(new Vec3(d0, d1, d2));
+						if (movingobjectposition != null) {
+							double d7 = movingobjectposition.hitVec.distanceTo(new Vec3(d0, d1, d2));
 
-						if (d7 < d3) {
-							d3 = d7;
+							if (d7 < d3) {
+								d3 = d7;
+							}
 						}
 					}
 				}
@@ -1317,6 +1327,10 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 			this.mc.mcProfiler.endStartSection("aboveClouds");
 			this.renderCloudsCheck(renderglobal, partialTicks, pass);
 		}
+
+		this.mc.mcProfiler.endStartSection("render3DEvent");
+
+		LiquidBounce.eventManager.callEvent(new Render3DEvent(partialTicks));
 
 		this.mc.mcProfiler.endStartSection("hand");
 
