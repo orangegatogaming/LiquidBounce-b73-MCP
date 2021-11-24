@@ -1,6 +1,9 @@
 package net.minecraft.entity;
 
 import net.ccbluex.liquidbounce.LiquidBounce;
+import net.ccbluex.liquidbounce.event.MoveEvent;
+import net.ccbluex.liquidbounce.event.StepConfirmEvent;
+import net.ccbluex.liquidbounce.event.StepEvent;
 import net.ccbluex.liquidbounce.event.StrafeEvent;
 import net.ccbluex.liquidbounce.features.module.modules.combat.HitBox;
 import net.ccbluex.liquidbounce.features.module.modules.exploit.NoPitchLimit;
@@ -579,6 +582,20 @@ public abstract class Entity implements ICommandSender {
 	 * Tries to moves the entity by the passed in displacement. Args: x, y, z
 	 */
 	public void moveEntity(double x, double y, double z) {
+		boolean isPlayer = this == Minecraft.getMinecraft().thePlayer;
+		MoveEvent moveEvent = null;
+		if(isPlayer){
+			moveEvent = new MoveEvent(x, y, z);
+			LiquidBounce.eventManager.callEvent(moveEvent);
+
+			if(moveEvent.isCancelled()){
+				return;
+			}
+			x = moveEvent.getX();
+			y = moveEvent.getY();
+			z = moveEvent.getZ();
+		}
+
 		if (this.noClip) {
 			this.setEntityBoundingBox(this.getEntityBoundingBox().offset(x, y, z));
 			this.resetPositionToBB();
@@ -603,7 +620,7 @@ public abstract class Entity implements ICommandSender {
 			double d5 = z;
 			boolean flag = this.onGround && this.isSneaking() && this instanceof EntityPlayer;
 
-			if (flag) {
+			if (flag || (moveEvent != null && moveEvent.isSafeWalk())) {
 				double d6;
 
 				for (d6 = 0.05D; x != 0.0D && this.worldObj.getCollidingBoundingBoxes(this, this.getEntityBoundingBox().offset(x, -1.0D, 0.0D)).isEmpty(); d3 = x) {
@@ -670,12 +687,17 @@ public abstract class Entity implements ICommandSender {
 			this.setEntityBoundingBox(this.getEntityBoundingBox().offset(0.0D, 0.0D, z));
 
 			if (this.stepHeight > 0.0F && flag1 && (d3 != x || d5 != z)) {
+				StepEvent stepEvent = null;
+				if(isPlayer){
+					 stepEvent = new StepEvent(this.stepHeight);
+					LiquidBounce.eventManager.callEvent(stepEvent);
+				}
 				double d11 = x;
 				double d7 = y;
 				double d8 = z;
 				AxisAlignedBB axisalignedbb3 = this.getEntityBoundingBox();
 				this.setEntityBoundingBox(axisalignedbb);
-				y = (double) this.stepHeight;
+				y = stepEvent != null ? stepEvent.getStepHeight() : this.stepHeight;
 				List<AxisAlignedBB> list = this.worldObj.getCollidingBoundingBoxes(this, this.getEntityBoundingBox().addCoord(d3, y, d5));
 				AxisAlignedBB axisalignedbb4 = this.getEntityBoundingBox();
 				AxisAlignedBB axisalignedbb5 = axisalignedbb4.addCoord(d3, 0.0D, d5);
@@ -748,6 +770,8 @@ public abstract class Entity implements ICommandSender {
 					y = d7;
 					z = d8;
 					this.setEntityBoundingBox(axisalignedbb3);
+				}else if(isPlayer){
+					LiquidBounce.eventManager.callEvent(new StepConfirmEvent());
 				}
 			}
 
