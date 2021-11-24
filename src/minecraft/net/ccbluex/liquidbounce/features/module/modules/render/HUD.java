@@ -33,7 +33,9 @@ public class HUD extends Module {
     public final FontValue fontChatValue = new FontValue("FontChat", Fonts.font35) {
         @Override
         protected void onChanged(FontRenderer oldValue, FontRenderer newValue) {
-            GuiNewChat.font = newValue;
+            if(HUD.getInstance().getState()){
+                GuiNewChat.font = newValue;
+            }
             super.onChanged(oldValue, newValue);
         }
     };
