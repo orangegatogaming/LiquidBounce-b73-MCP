@@ -5,6 +5,7 @@ import java.util.Random;
 
 import net.ccbluex.liquidbounce.LiquidBounce;
 import net.ccbluex.liquidbounce.event.BlockBBEvent;
+import net.ccbluex.liquidbounce.features.module.modules.exploit.GhostHand;
 import net.ccbluex.liquidbounce.features.module.modules.render.XRay;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -482,6 +483,11 @@ public class Block {
 	 * Returns if this block is collidable (only used by Fire). Args: x, y, z
 	 */
 	public boolean isCollidable() {
+		GhostHand hand = GhostHand.Companion.getInstance();
+		if(hand != null && hand.getState()){
+			return hand.getBlockValue().get() == Block.getIdFromBlock(this);
+		}
+
 		return true;
 	}
 
