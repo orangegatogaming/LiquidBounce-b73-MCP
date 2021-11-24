@@ -43,6 +43,8 @@ import net.ccbluex.liquidbounce.event.KeyEvent;
 import net.ccbluex.liquidbounce.event.TickEvent;
 import net.ccbluex.liquidbounce.event.WorldEvent;
 import net.ccbluex.liquidbounce.features.module.modules.combat.AutoClicker;
+import net.ccbluex.liquidbounce.features.module.modules.exploit.AbortBreaking;
+import net.ccbluex.liquidbounce.features.module.modules.exploit.MultiActions;
 import net.ccbluex.liquidbounce.features.module.modules.world.FastPlace;
 import net.ccbluex.liquidbounce.ui.client.GuiUpdate;
 import net.ccbluex.liquidbounce.ui.client.GuiWelcome;
@@ -1203,7 +1205,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	}
 
 	public int getLimitFramerate() {
-		return this.theWorld == null && this.currentScreen != null ? 30 : this.gameSettings.limitFramerate;
+		return this.theWorld == null && this.currentScreen != null ? 60 : this.gameSettings.limitFramerate;
 	}
 
 	public boolean isFramerateLimitBelowMax() {
@@ -1407,19 +1409,22 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	}
 
 	private void sendClickBlockToController(boolean leftClick) {
-		if (!leftClick) {
+		if(!leftClick)
 			this.leftClickCounter = 0;
-		}
 
-		if (this.leftClickCounter <= 0 && !this.thePlayer.isUsingItem()) {
-			if (leftClick && this.objectMouseOver != null && this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-				BlockPos blockpos = this.objectMouseOver.getBlockPos();
+		if (this.leftClickCounter <= 0 && (!this.thePlayer.isUsingItem() || MultiActions.Companion.getInstance().getState())) {
+			if(leftClick && this.objectMouseOver != null && this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+				BlockPos blockPos = this.objectMouseOver.getBlockPos();
 
-				if (this.theWorld.getBlockState(blockpos).getBlock().getMaterial() != Material.air && this.playerController.onPlayerDamageBlock(blockpos, this.objectMouseOver.sideHit)) {
-					this.effectRenderer.addBlockHitEffects(blockpos, this.objectMouseOver.sideHit);
+				if(this.leftClickCounter == 0)
+					LiquidBounce.eventManager.callEvent(new ClickBlockEvent(blockPos, this.objectMouseOver.sideHit));
+
+
+				if(this.theWorld.getBlockState(blockPos).getBlock().getMaterial() != Material.air && this.playerController.onPlayerDamageBlock(blockPos, this.objectMouseOver.sideHit)) {
+					this.effectRenderer.addBlockHitEffects(blockPos, this.objectMouseOver.sideHit);
 					this.thePlayer.swingItem();
 				}
-			} else {
+			} else if (!AbortBreaking.Companion.getInstance().getState()) {
 				this.playerController.resetBlockRemoving();
 			}
 		}
