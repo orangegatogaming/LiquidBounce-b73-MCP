@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
 
+import net.ccbluex.liquidbounce.features.module.modules.render.AntiBlind;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.material.Material;
@@ -1724,7 +1725,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(this.mc.theWorld, entity, partialTicks);
 
-		if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isPotionActive(Potion.blindness)) {
+		if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isPotionActive(Potion.blindness) && !(AntiBlind.getInstance().getState() && AntiBlind.getInstance().confusionEffect.get())) {
 			float f1 = 5.0F;
 			int i = ((EntityLivingBase) entity).getActivePotionEffect(Potion.blindness).getDuration();
 
