@@ -34,6 +34,8 @@ import java.util.Queue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.crypto.SecretKey;
 
+import net.ccbluex.liquidbounce.LiquidBounce;
+import net.ccbluex.liquidbounce.event.PacketEvent;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.CryptManager;
@@ -51,11 +53,11 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+public class NetworkManager extends SimpleChannelInboundHandler<Packet<?>> {
 	private static final Logger logger = LogManager.getLogger();
 	public static final Marker logMarkerNetwork = MarkerManager.getMarker("NETWORK");
 	public static final Marker logMarkerPackets = MarkerManager.getMarker("NETWORK_PACKETS", logMarkerNetwork);
-	public static final AttributeKey<EnumConnectionState> attrKeyConnectionState = AttributeKey.<EnumConnectionState>valueOf("protocol");
+	public static final AttributeKey<EnumConnectionState> attrKeyConnectionState = AttributeKey.valueOf("protocol");
 	public static final LazyLoadBase<NioEventLoopGroup> CLIENT_NIO_EVENTLOOP = new LazyLoadBase<NioEventLoopGroup>() {
 		protected NioEventLoopGroup load() {
 			return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Client IO #%d").setDaemon(true).build());
@@ -72,7 +74,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 		}
 	};
 	private final EnumPacketDirection direction;
-	private final Queue<NetworkManager.InboundHandlerTuplePacketListener> outboundPacketsQueue = Queues.<NetworkManager.InboundHandlerTuplePacketListener>newConcurrentLinkedQueue();
+	private final Queue<NetworkManager.InboundHandlerTuplePacketListener> outboundPacketsQueue = Queues.newConcurrentLinkedQueue();
 	private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
 	/**
@@ -109,7 +111,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 		try {
 			this.setConnectionState(EnumConnectionState.HANDSHAKING);
 		} catch (Throwable throwable) {
-			logger.fatal((Object) throwable);
+			logger.fatal(throwable);
 		}
 	}
 
@@ -122,23 +124,29 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 		logger.debug("Enabled auto read");
 	}
 
-	public void channelInactive(ChannelHandlerContext p_channelInactive_1_) throws Exception {
-		this.closeChannel(new ChatComponentTranslation("disconnect.endOfStream", new Object[0]));
+	public void channelInactive(ChannelHandlerContext p_channelInactive_1_) {
+		this.closeChannel(new ChatComponentTranslation("disconnect.endOfStream"));
 	}
 
-	public void exceptionCaught(ChannelHandlerContext p_exceptionCaught_1_, Throwable p_exceptionCaught_2_) throws Exception {
+	public void exceptionCaught(ChannelHandlerContext p_exceptionCaught_1_, Throwable p_exceptionCaught_2_) {
 		ChatComponentTranslation chatcomponenttranslation;
 
 		if (p_exceptionCaught_2_ instanceof TimeoutException) {
-			chatcomponenttranslation = new ChatComponentTranslation("disconnect.timeout", new Object[0]);
+			chatcomponenttranslation = new ChatComponentTranslation("disconnect.timeout");
 		} else {
-			chatcomponenttranslation = new ChatComponentTranslation("disconnect.genericReason", new Object[]{"Internal Exception: " + p_exceptionCaught_2_});
+			chatcomponenttranslation = new ChatComponentTranslation("disconnect.genericReason", "Internal Exception: " + p_exceptionCaught_2_);
 		}
 
 		this.closeChannel(chatcomponenttranslation);
 	}
 
-	protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet p_channelRead0_2_) throws Exception {
+	protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet p_channelRead0_2_) {
+		final PacketEvent event = new PacketEvent(p_channelRead0_2_);
+		LiquidBounce.eventManager.callEvent(event);
+
+		if(event.isCancelled())
+			return;
+
 		if (this.channel.isOpen()) {
 			try {
 				p_channelRead0_2_.processPacket(this.packetListener);
@@ -153,15 +161,36 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 	 * connection state (protocol)
 	 */
 	public void setNetHandler(INetHandler handler) {
-		Validate.notNull(handler, "packetListener", new Object[0]);
-		logger.debug("Set listener of {} to {}", new Object[]{this, handler});
+		Validate.notNull(handler, "packetListener");
+		logger.debug("Set listener of {} to {}", this, handler);
 		this.packetListener = handler;
 	}
 
 	public void sendPacket(Packet packetIn) {
+		final PacketEvent event = new PacketEvent(packetIn);
+		LiquidBounce.eventManager.callEvent(event);
+
+		if(event.isCancelled())
+			return;
+
 		if (this.isChannelOpen()) {
 			this.flushOutboundQueue();
-			this.dispatchPacket(packetIn, (GenericFutureListener<? extends Future<? super Void>>[]) null);
+			this.dispatchPacket(packetIn, null);
+		} else {
+			this.readWriteLock.writeLock().lock();
+
+			try {
+				this.outboundPacketsQueue.add(new NetworkManager.InboundHandlerTuplePacketListener(packetIn, (GenericFutureListener[]) null));
+			} finally {
+				this.readWriteLock.writeLock().unlock();
+			}
+		}
+	}
+
+	public void sendPacketNoEvent(Packet packetIn) {
+		if (this.isChannelOpen()) {
+			this.flushOutboundQueue();
+			this.dispatchPacket(packetIn, null);
 		} else {
 			this.readWriteLock.writeLock().lock();
 
@@ -176,12 +205,12 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 	public void sendPacket(Packet packetIn, GenericFutureListener<? extends Future<? super Void>> listener, GenericFutureListener<? extends Future<? super Void>>... listeners) {
 		if (this.isChannelOpen()) {
 			this.flushOutboundQueue();
-			this.dispatchPacket(packetIn, (GenericFutureListener[]) ArrayUtils.add(listeners, 0, listener));
+			this.dispatchPacket(packetIn, ArrayUtils.add(listeners, 0, listener));
 		} else {
 			this.readWriteLock.writeLock().lock();
 
 			try {
-				this.outboundPacketsQueue.add(new NetworkManager.InboundHandlerTuplePacketListener(packetIn, (GenericFutureListener[]) ArrayUtils.add(listeners, 0, listener)));
+				this.outboundPacketsQueue.add(new NetworkManager.InboundHandlerTuplePacketListener(packetIn, ArrayUtils.add(listeners, 0, listener)));
 			} finally {
 				this.readWriteLock.writeLock().unlock();
 			}
@@ -194,7 +223,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 	 */
 	private void dispatchPacket(final Packet inPacket, final GenericFutureListener<? extends Future<? super Void>>[] futureListeners) {
 		final EnumConnectionState enumconnectionstate = EnumConnectionState.getFromPacket(inPacket);
-		final EnumConnectionState enumconnectionstate1 = (EnumConnectionState) this.channel.attr(attrKeyConnectionState).get();
+		final EnumConnectionState enumconnectionstate1 = this.channel.attr(attrKeyConnectionState).get();
 
 		if (enumconnectionstate1 != enumconnectionstate) {
 			logger.debug("Disabled auto read");
@@ -214,20 +243,18 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 
 			channelfuture.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
 		} else {
-			this.channel.eventLoop().execute(new Runnable() {
-				public void run() {
-					if (enumconnectionstate != enumconnectionstate1) {
-						NetworkManager.this.setConnectionState(enumconnectionstate);
-					}
-
-					ChannelFuture channelfuture1 = NetworkManager.this.channel.writeAndFlush(inPacket);
-
-					if (futureListeners != null) {
-						channelfuture1.addListeners(futureListeners);
-					}
-
-					channelfuture1.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+			this.channel.eventLoop().execute(() -> {
+				if (enumconnectionstate != enumconnectionstate1) {
+					NetworkManager.this.setConnectionState(enumconnectionstate);
 				}
+
+				ChannelFuture channelfuture1 = NetworkManager.this.channel.writeAndFlush(inPacket);
+
+				if (futureListeners != null) {
+					channelfuture1.addListeners(futureListeners);
+				}
+
+				channelfuture1.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
 			});
 		}
 	}
@@ -241,7 +268,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 
 			try {
 				while (!this.outboundPacketsQueue.isEmpty()) {
-					NetworkManager.InboundHandlerTuplePacketListener networkmanager$inboundhandlertuplepacketlistener = (NetworkManager.InboundHandlerTuplePacketListener) this.outboundPacketsQueue.poll();
+					NetworkManager.InboundHandlerTuplePacketListener networkmanager$inboundhandlertuplepacketlistener = this.outboundPacketsQueue.poll();
 					this.dispatchPacket(networkmanager$inboundhandlertuplepacketlistener.packet, networkmanager$inboundhandlertuplepacketlistener.futureListeners);
 				}
 			} finally {
