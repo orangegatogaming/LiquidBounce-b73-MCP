@@ -38,6 +38,7 @@ import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
 
 import net.ccbluex.liquidbounce.LiquidBounce;
+import net.ccbluex.liquidbounce.event.KeyEvent;
 import net.ccbluex.liquidbounce.event.TickEvent;
 import net.ccbluex.liquidbounce.ui.client.GuiUpdate;
 import net.ccbluex.liquidbounce.ui.client.GuiWelcome;
@@ -1730,6 +1731,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 					if (this.currentScreen != null) {
 						this.currentScreen.handleKeyboardInput();
 					} else {
+						LiquidBounce.eventManager.callEvent(new KeyEvent(Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey()));
+
 						if (k == 1) {
 							this.displayInGameMenu();
 						}
