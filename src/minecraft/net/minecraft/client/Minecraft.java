@@ -38,10 +38,7 @@ import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
 
 import net.ccbluex.liquidbounce.LiquidBounce;
-import net.ccbluex.liquidbounce.event.ClickBlockEvent;
-import net.ccbluex.liquidbounce.event.KeyEvent;
-import net.ccbluex.liquidbounce.event.TickEvent;
-import net.ccbluex.liquidbounce.event.WorldEvent;
+import net.ccbluex.liquidbounce.event.*;
 import net.ccbluex.liquidbounce.features.module.modules.combat.AutoClicker;
 import net.ccbluex.liquidbounce.features.module.modules.exploit.AbortBreaking;
 import net.ccbluex.liquidbounce.features.module.modules.exploit.MultiActions;
@@ -968,21 +965,25 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		}
 
 		if (guiScreenIn == null && this.theWorld == null) {
-			guiScreenIn = new net.ccbluex.liquidbounce.ui.client.GuiMainMenu();
+			guiScreenIn = new GuiMainMenu();
 		} else if (guiScreenIn == null && this.thePlayer.getHealth() <= 0.0F) {
 			guiScreenIn = new GuiGameOver();
 		}
 
 		if (guiScreenIn instanceof GuiMainMenu) {
-			// TODO: See if this works
-			guiScreenIn = new net.ccbluex.liquidbounce.ui.client.GuiMainMenu();
-
-			ScaledResolution sc = new ScaledResolution(this);
-			currentScreen.setWorldAndResolution(this, sc.getScaledWidth(), sc.getScaledHeight());
-
 			this.gameSettings.showDebugInfo = false;
 			this.ingameGUI.getChatGUI().clearChatMessages();
 		}
+
+		if(currentScreen instanceof net.minecraft.client.gui.GuiMainMenu || (currentScreen != null && currentScreen.getClass().getName().startsWith("net.labymod") && currentScreen.getClass().getSimpleName().equals("ModGuiMainMenu"))) {
+			guiScreenIn = new net.ccbluex.liquidbounce.ui.client.GuiMainMenu();
+
+			ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+			guiScreenIn.setWorldAndResolution(Minecraft.getMinecraft(), scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight());
+			skipRenderWorld = false;
+		}
+
+		LiquidBounce.eventManager.callEvent(new ScreenEvent(currentScreen));
 
 		this.currentScreen = guiScreenIn;
 
