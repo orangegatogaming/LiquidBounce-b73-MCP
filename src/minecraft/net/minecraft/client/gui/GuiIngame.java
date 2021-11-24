@@ -356,6 +356,9 @@ public class GuiIngame extends Gui {
 			this.overlayPlayerList.renderPlayerlist(i, scoreboard, scoreobjective1);
 		}
 
+		LiquidBounce.eventManager.callEvent(new Render2DEvent(partialTicks));
+		AWTFontRenderer.Companion.garbageCollectionTick();
+
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.disableLighting();
 		GlStateManager.enableAlpha();
@@ -391,9 +394,6 @@ public class GuiIngame extends Gui {
 				int l = sr.getScaledHeight() - 16 - 3;
 				this.renderHotbarItem(j, k, l, partialTicks, entityPlayer);
 			}
-
-			LiquidBounce.eventManager.callEvent(new Render2DEvent(partialTicks));
-			AWTFontRenderer.Companion.garbageCollectionTick();
 
 			RenderHelper.disableStandardItemLighting();
 			GlStateManager.disableRescaleNormal();
