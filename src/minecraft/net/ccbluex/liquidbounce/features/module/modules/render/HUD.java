@@ -12,14 +12,21 @@ import net.minecraft.util.ResourceLocation;
 
 @ModuleInfo(name = "HUD", description = "Toggles visibility of the HUD.", category = ModuleCategory.RENDER, array = false)
 public class HUD extends Module {
+    private static HUD instance;
+
+    public static HUD getInstance(){
+        return instance;
+    }
+
+    public HUD() {
+        setState(true);
+        instance = this;
+    }
+
     public final BoolValue blackHotbarValue = new BoolValue("BlackHotbar", true);
     public final BoolValue inventoryParticle = new BoolValue("InventoryParticle", false);
     private final BoolValue blurValue = new BoolValue("Blur", false);
     public final BoolValue fontChatValue = new BoolValue("FontChat", false);
-
-    public HUD() {
-        setState(true);
-    }
 
     @EventTarget
     public void onRender2D(final Render2DEvent event) {
