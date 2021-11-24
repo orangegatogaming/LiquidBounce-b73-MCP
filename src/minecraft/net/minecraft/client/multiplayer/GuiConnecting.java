@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.mojang.authlib.GameProfile;
 import net.ccbluex.liquidbounce.ui.font.Fonts;
+import net.ccbluex.liquidbounce.utils.ServerUtils;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.mcleaks.MCLeaks;
 import net.minecraft.client.Minecraft;
@@ -49,6 +50,7 @@ public class GuiConnecting extends GuiScreen {
 	}
 
 	private void connect(final String ip, final int port) {
+		ServerUtils.serverData = new ServerData("", ip + ":" + port, false);
 		logger.info("Connecting to " + ip + ", " + port);
 		(new Thread("Server Connector #" + CONNECTION_ID.incrementAndGet()) {
 			public void run() {
