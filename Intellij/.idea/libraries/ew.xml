@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="ew">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../libs/com.thealtening.api.api-4.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../libs/com.thealtening.auth.auth-3.0.2-1.16.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../libs/com.thealtening.api.ap-4.1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
