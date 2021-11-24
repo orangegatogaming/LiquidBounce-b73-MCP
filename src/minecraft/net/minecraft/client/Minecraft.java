@@ -1359,6 +1359,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	 */
 	public void shutdown() {
 		this.running = false;
+		LiquidBounce.INSTANCE.stopClient();
 	}
 
 	/**
