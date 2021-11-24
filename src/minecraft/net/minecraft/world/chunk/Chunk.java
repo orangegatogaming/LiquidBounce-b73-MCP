@@ -11,6 +11,9 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import net.ccbluex.liquidbounce.LiquidBounce;
+import net.ccbluex.liquidbounce.features.module.modules.render.ProphuntESP;
+import net.ccbluex.liquidbounce.utils.render.MiniMapRegister;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -570,6 +573,16 @@ public class Chunk {
 	}
 
 	public IBlockState setBlockState(BlockPos pos, IBlockState state) {
+        MiniMapRegister.INSTANCE.updateChunk(this);
+
+        final ProphuntESP prophuntESP = ProphuntESP.getInstance();
+
+        if (prophuntESP.getState()) {
+            synchronized (prophuntESP.blocks) {
+                prophuntESP.blocks.put(pos, System.currentTimeMillis());
+            }
+        }
+
 		int i = pos.getX() & 15;
 		int j = pos.getY();
 		int k = pos.getZ() & 15;
@@ -847,6 +860,7 @@ public class Chunk {
 	 * Called when this Chunk is unloaded by the ChunkProvider
 	 */
 	public void onChunkUnload() {
+        MiniMapRegister.INSTANCE.unloadChunk(this.xPosition, this.zPosition);
 		this.isChunkLoaded = false;
 
 		for (TileEntity tileentity : this.chunkTileEntityMap.values()) {
@@ -1085,6 +1099,7 @@ public class Chunk {
 	 * Initialize this chunk with new binary data.
 	 */
 	public void fillChunk(byte[] p_177439_1_, int p_177439_2_, boolean p_177439_3_) {
+        MiniMapRegister.INSTANCE.updateChunk(this);
 		int i = 0;
 		boolean flag = !this.worldObj.provider.getHasNoSky();
 
