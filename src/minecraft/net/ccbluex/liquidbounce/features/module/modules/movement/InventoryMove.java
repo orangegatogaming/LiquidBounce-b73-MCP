@@ -26,7 +26,7 @@ public class InventoryMove extends Module {
 	}
 
 	private BoolValue noDetectableValue = new BoolValue("NoDetectable", false);
-	private BoolValue aacAdditionProValue = new BoolValue("AACAdditionPro", false);
+	public BoolValue aacAdditionProValue = new BoolValue("AACAdditionPro", false);
 	private BoolValue noMoveClicksValue = new BoolValue("NoMoveClicks", false);
 
 	@EventTarget
