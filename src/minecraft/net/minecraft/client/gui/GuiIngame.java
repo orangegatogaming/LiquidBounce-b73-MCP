@@ -12,6 +12,7 @@ import net.ccbluex.liquidbounce.LiquidBounce;
 import net.ccbluex.liquidbounce.event.Render2DEvent;
 import net.ccbluex.liquidbounce.features.module.modules.render.AntiBlind;
 import net.ccbluex.liquidbounce.features.module.modules.render.HUD;
+import net.ccbluex.liquidbounce.features.module.modules.render.NoScoreboard;
 import net.ccbluex.liquidbounce.ui.font.AWTFontRenderer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -528,6 +529,9 @@ public class GuiIngame extends Gui {
 	}
 
 	private void renderScoreboard(ScoreObjective objective, ScaledResolution scaledRes) {
+		if (HUD.getInstance().getState() || NoScoreboard.INSTANCE.getState())
+			return;
+
 		Scoreboard scoreboard = objective.getScoreboard();
 		Collection<Score> collection = scoreboard.getSortedScores(objective);
 		List<Score> list = Lists.newArrayList(Iterables.filter(collection, new Predicate<Score>() {
