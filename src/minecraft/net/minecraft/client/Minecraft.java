@@ -38,8 +38,10 @@ import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
 
 import net.ccbluex.liquidbounce.LiquidBounce;
+import net.ccbluex.liquidbounce.event.TickEvent;
 import net.ccbluex.liquidbounce.ui.client.GuiUpdate;
 import net.ccbluex.liquidbounce.ui.client.GuiWelcome;
+import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -1020,10 +1022,22 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		System.gc();
 	}
 
+	private long lastFrame = getTime();
+
+	public long getTime() {
+		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+	}
+
 	/**
 	 * Called repeatedly from run()
 	 */
 	private void runGameLoop() throws IOException {
+		final long currentTime = getTime();
+		final int deltaTime = (int) (currentTime - lastFrame);
+		lastFrame = currentTime;
+
+		RenderUtils.deltaTime = deltaTime;
+
 		long i = System.nanoTime();
 		this.mcProfiler.startSection("root");
 
@@ -1893,6 +1907,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 		if (this.theWorld != null) {
 			if (this.thePlayer != null) {
+				LiquidBounce.eventManager.callEvent(new TickEvent());
 				++this.joinPlayerCounter;
 
 				if (this.joinPlayerCounter == 30) {
