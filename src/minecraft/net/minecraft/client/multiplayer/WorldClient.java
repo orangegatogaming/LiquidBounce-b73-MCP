@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import net.ccbluex.liquidbounce.features.module.modules.render.TrueSight;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -282,8 +283,9 @@ public class WorldClient extends World {
 			IBlockState iblockstate = this.getBlockState(blockpos$mutableblockpos);
 			iblockstate.getBlock().randomDisplayTick(this, blockpos$mutableblockpos, iblockstate, random);
 
-			if (flag && iblockstate.getBlock() == Blocks.barrier) {
-				this.spawnParticle(EnumParticleTypes.BARRIER, (double) ((float) k + 0.5F), (double) ((float) l + 0.5F), (double) ((float) i1 + 0.5F), 0.0D, 0.0D, 0.0D, new int[0]);
+			final TrueSight trueSight = TrueSight.getInstance();
+			if (iblockstate.getBlock() == Blocks.barrier && (flag || (trueSight.getState() && trueSight.barriersValue.get()))) {
+				this.spawnParticle(EnumParticleTypes.BARRIER, k + 0.5F, l + 0.5F, i1 + 0.5F, 0.0D, 0.0D, 0.0D);
 			}
 		}
 	}
