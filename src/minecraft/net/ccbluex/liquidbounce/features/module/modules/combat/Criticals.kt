@@ -17,6 +17,14 @@ import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
 
 @ModuleInfo(name = "Criticals", description = "Automatically deals critical hits.", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
+    // NOOO
+    companion object {
+        var instance: Criticals? = null
+    }
+
+    init {
+        instance = this
+    }
 
     val modeValue = ListValue("Mode", arrayOf("Packet", "NcpPacket", "NoGround", "Hop", "TPHop", "Jump", "LowJump"), "packet")
     val delayValue = IntegerValue("Delay", 0, 0, 500)
