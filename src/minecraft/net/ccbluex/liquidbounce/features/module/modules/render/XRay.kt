@@ -10,6 +10,10 @@ import net.minecraft.init.Blocks
 
 @ModuleInfo(name = "XRay", description = "Allows you to see ores through walls.", category = ModuleCategory.RENDER)
 class XRay : Module() {
+    companion object {
+        var instance: XRay? = null
+    }
+
     val xrayBlocks = mutableListOf<Block>(
             Blocks.coal_ore,
             Blocks.iron_ore,
@@ -48,6 +52,8 @@ class XRay : Module() {
     )
 
     init {
+        instance = this
+
         LiquidBounce.commandManager.registerCommand(object : Command("xray", emptyArray()) {
 
             override fun execute(args: Array<String>) {
