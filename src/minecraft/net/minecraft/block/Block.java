@@ -5,8 +5,11 @@ import java.util.Random;
 
 import net.ccbluex.liquidbounce.LiquidBounce;
 import net.ccbluex.liquidbounce.event.BlockBBEvent;
+import net.ccbluex.liquidbounce.features.module.modules.combat.Criticals;
 import net.ccbluex.liquidbounce.features.module.modules.exploit.GhostHand;
+import net.ccbluex.liquidbounce.features.module.modules.player.NoFall;
 import net.ccbluex.liquidbounce.features.module.modules.render.XRay;
+import net.ccbluex.liquidbounce.features.module.modules.world.NoSlowBreak;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -548,7 +551,29 @@ public class Block {
 	 */
 	public float getPlayerRelativeBlockHardness(EntityPlayer playerIn, World worldIn, BlockPos pos) {
 		float f = this.getBlockHardness(worldIn, pos);
-		return f < 0.0F ? 0.0F : (!playerIn.canHarvestBlock(this) ? playerIn.getToolDigEfficiency(this) / f / 100.0F : playerIn.getToolDigEfficiency(this) / f / 30.0F);
+		float returnValue = f < 0.0F ? 0.0F : (!playerIn.canHarvestBlock(this) ? playerIn.getToolDigEfficiency(this) / f / 100.0F : playerIn.getToolDigEfficiency(this) / f / 30.0F);
+
+		NoSlowBreak noSlowBreak = NoSlowBreak.Companion.getInstance();
+		if (noSlowBreak.getState()) {
+			if (noSlowBreak.getWaterValue().get() && playerIn.isInsideOfMaterial(Material.water) &&
+					!EnchantmentHelper.getAquaAffinityModifier(playerIn)) {
+				returnValue *= 5.0F;
+			}
+
+			if (noSlowBreak.getAirValue().get() && !playerIn.onGround) {
+				returnValue *= 5.0F;
+			}
+		} else if (playerIn.onGround) { // NoGround
+			final NoFall noFall = NoFall.getInstance();
+			final Criticals criticals = Criticals.Companion.getInstance();
+
+			if (noFall.getState() && noFall.modeValue.get().equalsIgnoreCase("NoGround") ||
+					criticals.getState() && criticals.getModeValue().get().equalsIgnoreCase("NoGround")) {
+				returnValue /= 5F;
+			}
+		}
+
+		return returnValue;
 	}
 
 	/**
@@ -973,6 +998,10 @@ public class Block {
 	 * Returns the default ambient occlusion value based on block opacity
 	 */
 	public float getAmbientOcclusionLightValue() {
+		if(XRay.Companion.getInstance().getState()){
+			return 1.0F;
+		}
+
 		return this.isBlockNormalCube() ? 0.2F : 1.0F;
 	}
 
