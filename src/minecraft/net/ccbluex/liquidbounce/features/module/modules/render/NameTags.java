@@ -27,6 +27,16 @@ import java.awt.*;
 
 @ModuleInfo(name = "NameTags", description = "Changes the scale of the nametags so you can always read them.", category = ModuleCategory.RENDER)
 public class NameTags extends Module {
+    private static NameTags instance;
+
+    public static NameTags getInstance(){
+        return instance;
+    }
+
+    public NameTags(){
+        instance = this;
+    }
+
     private final BoolValue healthValue = new BoolValue("Health", true);
     private final BoolValue pingValue = new BoolValue("Ping", true);
     private final BoolValue distanceValue = new BoolValue("Distance", false);
