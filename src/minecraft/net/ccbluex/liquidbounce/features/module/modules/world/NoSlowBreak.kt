@@ -14,4 +14,8 @@ class NoSlowBreak : Module() {
 
     val airValue = BoolValue("Air", true)
     val waterValue = BoolValue("Water", false)
+
+    init {
+        instance = this
+    }
 }
