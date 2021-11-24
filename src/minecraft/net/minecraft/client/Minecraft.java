@@ -38,6 +38,8 @@ import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
 
 import net.ccbluex.liquidbounce.LiquidBounce;
+import net.ccbluex.liquidbounce.ui.client.GuiUpdate;
+import net.ccbluex.liquidbounce.ui.client.GuiWelcome;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -594,10 +596,17 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 		LiquidBounce.INSTANCE.startClient();
 
+		GuiScreen mainMenu = new net.ccbluex.liquidbounce.ui.client.GuiMainMenu();
+		if(LiquidBounce.fileManager.firstStart){
+			mainMenu = new GuiWelcome();
+		}else if(LiquidBounce.INSTANCE.getLatestVersion() > LiquidBounce.CLIENT_VERSION - (LiquidBounce.IN_DEV ? 1 : 0)){
+			mainMenu = new GuiUpdate();
+		}
+
 		if (this.serverName != null) {
-			this.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort));
+			this.displayGuiScreen(new GuiConnecting(mainMenu, this, this.serverName, this.serverPort));
 		} else {
-			this.displayGuiScreen(new GuiMainMenu());
+			this.displayGuiScreen(mainMenu);
 		}
 
 		this.renderEngine.deleteTexture(this.mojangLogo);
