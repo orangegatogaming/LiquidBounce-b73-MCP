@@ -118,10 +118,10 @@ public abstract class AbstractClientPlayer extends EntityPlayer {
 	}
 
 	public float getFovModifier() {
-		final NoFOV fovModule = NoFOV.Companion.getInstance();
+		final NoFOV fovModule = NoFOV.getInstance();
 
 		if(fovModule.getState()) {
-			float newFOV = fovModule.getFovValue().get();
+			float newFOV = fovModule.fovValue.get();
 
 			if(!this.isUsingItem()) {
 				return newFOV;
