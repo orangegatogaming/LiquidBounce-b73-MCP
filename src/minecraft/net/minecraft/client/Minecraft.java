@@ -38,6 +38,7 @@ import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
 
 import net.ccbluex.liquidbounce.LiquidBounce;
+import net.ccbluex.liquidbounce.event.ClickBlockEvent;
 import net.ccbluex.liquidbounce.event.KeyEvent;
 import net.ccbluex.liquidbounce.event.TickEvent;
 import net.ccbluex.liquidbounce.ui.client.GuiUpdate;
@@ -1404,6 +1405,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			} else {
 				this.playerController.resetBlockRemoving();
 			}
+		}
+		if(this.leftClickCounter == 0 && theWorld.getBlockState(objectMouseOver.getBlockPos()).getBlock().getMaterial() != Material.air) {
+			LiquidBounce.eventManager.callEvent(new ClickBlockEvent(objectMouseOver.getBlockPos(), this.objectMouseOver.sideHit));
 		}
 	}
 
