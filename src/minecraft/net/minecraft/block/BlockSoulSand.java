@@ -25,7 +25,7 @@ public class BlockSoulSand extends Block {
 	 * Called When an Entity Collided with the Block
 	 */
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
-        if(!NoSlow.Companion.getInstance().getState() || NoSlow.Companion.getInstance().getSoulsandValue().get()){
+        if(!NoSlow.getInstance().getState() || NoSlow.getInstance().soulSandValue.get()){
             entityIn.motionX *= 0.4D;
             entityIn.motionZ *= 0.4D;
         }

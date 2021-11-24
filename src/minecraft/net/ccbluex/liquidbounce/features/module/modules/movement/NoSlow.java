@@ -45,7 +45,7 @@ public class NoSlow extends Module {
      * Soulsand
      */
     // Soulsand TODO: Soulsand
-    private BoolValue soulsandValue = new BoolValue("Soulsand", true); // Soulsand
+    public BoolValue soulSandValue = new BoolValue("Soulsand", true); // Soulsand
 
     @EventTarget
     public void onMotion(MotionEvent event) {
