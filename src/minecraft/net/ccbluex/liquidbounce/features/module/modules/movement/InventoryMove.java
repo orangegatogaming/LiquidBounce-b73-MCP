@@ -15,6 +15,16 @@ import net.minecraft.client.settings.GameSettings;
 
 @ModuleInfo(name = "InventoryMove", description = "Allows you to walk while an inventory is opened.", category = ModuleCategory.MOVEMENT)
 public class InventoryMove extends Module {
+	private static InventoryMove instance;
+
+	public static InventoryMove getInstance(){
+		return instance;
+	}
+
+	public InventoryMove(){
+		instance = this;
+	}
+
 	private BoolValue noDetectableValue = new BoolValue("NoDetectable", false);
 	private BoolValue aacAdditionProValue = new BoolValue("AACAdditionPro", false);
 	private BoolValue noMoveClicksValue = new BoolValue("NoMoveClicks", false);
