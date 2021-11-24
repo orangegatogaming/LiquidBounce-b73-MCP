@@ -37,6 +37,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
 
+import net.ccbluex.liquidbounce.LiquidBounce;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -447,6 +448,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	}
 
 	public void run() {
+		displayWidth = Math.max(1067, displayWidth);
+		displayHeight = Math.max(622, displayHeight);
+
 		this.running = true;
 
 		try {
@@ -587,6 +591,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
 		this.checkGLError("Post startup");
 		this.ingameGUI = new GuiIngame(this);
+
+		LiquidBounce.INSTANCE.startClient();
 
 		if (this.serverName != null) {
 			this.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort));
