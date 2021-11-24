@@ -41,12 +41,14 @@ import net.ccbluex.liquidbounce.LiquidBounce;
 import net.ccbluex.liquidbounce.event.ClickBlockEvent;
 import net.ccbluex.liquidbounce.event.KeyEvent;
 import net.ccbluex.liquidbounce.event.TickEvent;
+import net.ccbluex.liquidbounce.event.WorldEvent;
 import net.ccbluex.liquidbounce.features.module.modules.combat.AutoClicker;
 import net.ccbluex.liquidbounce.features.module.modules.world.FastPlace;
 import net.ccbluex.liquidbounce.ui.client.GuiUpdate;
 import net.ccbluex.liquidbounce.ui.client.GuiWelcome;
 import net.ccbluex.liquidbounce.utils.CPSCounter;
 import net.ccbluex.liquidbounce.utils.render.IconUtils;
+import net.ccbluex.liquidbounce.utils.render.MiniMapRegister;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -2104,6 +2106,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			this.guiAchievement.clearAchievements();
 			this.entityRenderer.getMapItemRenderer().clearLoadedMaps();
 		}
+		if(theWorld != null){
+			MiniMapRegister.INSTANCE.unloadAllChunks();
+		}
+		LiquidBounce.eventManager.callEvent(new WorldEvent(worldClientIn));
 
 		this.renderViewEntity = null;
 		this.myNetworkManager = null;
