@@ -239,6 +239,9 @@ public abstract class World implements IBlockAccess
      */
     private boolean isValid(BlockPos pos)
     {
+        if(pos == null)
+            return false;
+
         return pos.getX() >= -30000000 && pos.getZ() >= -30000000 && pos.getX() < 30000000 && pos.getZ() < 30000000 && pos.getY() >= 0 && pos.getY() < 256;
     }
 
