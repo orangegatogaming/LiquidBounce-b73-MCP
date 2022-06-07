@@ -6,5 +6,4 @@ Source:
 https://github.com/CCBlueX/LiquidBounce/tree/7672ffacabf9baa70968e99209f841a335ea8ec9/
 
 # State
-This project is still being in development
-It has minor issues because i haven't implemented every mixin in vanilla minecraft
+Abandoned for personal reasons.
